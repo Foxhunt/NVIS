@@ -9,21 +9,6 @@ var udpSocket = dgram.createSocket("udp4");
 //zeitintervall in dem die OIDs abgefragt werden
 var interval = 10;
 
-
-/* TEXT AUSGABE
-// überschrift in der Console
-var header = "ifOutOctets		ifOutUtil		ifInOctets		ifInUtil		Speed			Descr";
-console.log(header);
-
-// überschrift im file
-ports.forEach((port) => {
-	fs.writeFile(__dirname + "\\out\\" + port.beschreibung + ".txt", header + "\r\n", (err) => {
-		if (err) throw err;
-	});
-});
-*/
-
-
 //intervall für das regelmäsige abfragen der oids
 setInterval(() => {
 
@@ -67,17 +52,6 @@ function getValues(port, index, portAry) {
 				if (err)
 					console.error(err);
 			});
-
-			/* TEXT AUSGABE
-			//gesammelte daten auf die Konsole geben
-			console.log(out);
-
-			// einfaches schreiben in eine output file
-			fs.appendFile(__dirname + "\\out\\" + port.beschreibung + '.txt', out + "\r\n", function (err) {
-				if (err)
-					throw err;
-			});
-			*/
 
 			// speichern der letzten in und out octets zum errechnen des Deltas
 			portAry[index].lastSpeed = varbinds[0].value;
