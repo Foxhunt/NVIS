@@ -1,0 +1,29 @@
+{
+  "name": "nvis",
+  "version": "1.0.0",
+  "description": "Liest SNMP-Daten aus nud verteilt sie über UDP",
+  "main": "app.js",
+  "dependencies": {
+    "net-snmp": "^1.1.19"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Foxhunt/NVIS.git"
+  },
+  "keywords": [
+    "nvis",
+    "SNMP",
+    "UDP",
+    "LED"
+  ],
+  "author": "Marco M.",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Foxhunt/NVIS/issues"
+  },
+  "homepage": "https://github.com/Foxhunt/NVIS#readme"
+}
