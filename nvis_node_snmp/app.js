@@ -10,7 +10,7 @@ var udpSocket = dgram.createSocket("udp4");
 var interval = 10;
 
 // Länge des betrachteten zeitfensters in minuten
-var window = 1;
+var window = 10;
 
 //intervall für das regelmäsige abfragen der oids
 setInterval(() => {
@@ -53,7 +53,7 @@ function getValues(port, index, portAry) {
 			out += "	Descr: " + port.beschreibung;
 
 			//gesammelte daten an das Ziel senden
-			udpSocket.send(out, 1337, port.ziel, (err) => {
+			udpSocket.send(out, 0, out.length, 1337, port.ziel, (err) => {
 				if (err)
 					console.error(err);
 			});
@@ -61,7 +61,7 @@ function getValues(port, index, portAry) {
 
 			// überprüfe die Anzahl der gespeicherten messpunkte
 			// sind mehr als nötig vorhanden lösche das erste
-			if(port.maxSpeed.length > ((window * 60) / interval))
+			if (port.maxSpeed.length > ((window * 60) / interval))
 				port.maxSpeed.shift();
 
 			// füge den aktuellen wert hinzu
@@ -102,6 +102,6 @@ function bitPerSec(lastVal, currentVal) {
 	var delta = lastVal < currentVal ? (currentVal - lastVal) : (2 ^ 32 - 1 - lastVal + currentVal);
 
 	// bit/s berechnen und zurück geben
-	return Math.round((delta * 8 ) / interval);
+	return Math.round((delta * 8) / interval);
 
 }
