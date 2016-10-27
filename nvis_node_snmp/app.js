@@ -7,7 +7,7 @@ var ports = require(__dirname + "/ports.json");
 var udpSocket = dgram.createSocket("udp4");
 
 //zeitintervall in dem die OIDs abgefragt werden
-var interval = 10;
+var interval = 15;
 
 // Länge des betrachteten zeitfensters in minuten
 var window = 10;
@@ -29,6 +29,12 @@ function getValues(port, index, portAry) {
 	//session für die snmp-Abfrage
 	var session = snmp.createSession(port.quelle, port.comunity);
 
+	//maximum des betrachteten zeitraums ermitteln
+	//absteigend sortieren und das erste element auswählen
+	var maxSpeed = port.maxSpeed.concat().sort((a, b) => {
+		return b - a
+	})[0];
+
 	//array für die abgefragten OIDs
 	var oids = [];
 	oids.push(port.speed);
@@ -45,12 +51,16 @@ function getValues(port, index, portAry) {
 				if (snmp.isVarbindError(varbinds[i]))
 					console.error(snmp.varbindError(varbinds[i]));
 
-			var out = "ifOutOctets: " + varbinds[2].value;
-			out += "	ifOutUtil: " + utili(port.lastIfOutOctets, varbinds[2].value, port.lastSpeed, varbinds[0].value) + "%";
+
+
+			//String zum versenden erstellen
+			var out = " ifOutOctets: " + varbinds[2].value;
+			out += "	ifOutUtil: " + utili(port.lastIfOutOctets, varbinds[2].value, port.lastSpeed, maxSpeed) + "%";
 			out += "		ifInOctets: " + varbinds[1].value;
-			out += "	ifInUtil: " + utili(port.lastIfInOctets, varbinds[1].value, port.lastSpeed, varbinds[0].value) + "%";
+			out += "	ifInUtil: " + utili(port.lastIfInOctets, varbinds[1].value, port.lastSpeed, maxSpeed) + "%";
 			out += "		Speed: " + varbinds[0].value;
 			out += "	Descr: " + port.beschreibung;
+
 
 			//gesammelte daten an das Ziel senden
 			udpSocket.send(out, 0, out.length, 1337, port.ziel, (err) => {
@@ -58,18 +68,20 @@ function getValues(port, index, portAry) {
 					console.error(err);
 			});
 
+			//ermittle aktuelle Bit/s
+			var currentBPS = bitPerSec(port.lastIfOutOctets, varbinds[2].value) + bitPerSec(port.lastIfInOctets, varbinds[1].value);
 
 			// überprüfe die Anzahl der gespeicherten messpunkte
 			// sind mehr als nötig vorhanden lösche das erste
-			if (port.maxSpeed.length > ((window * 60) / interval))
+			if (port.maxSpeed.length >= ((window * 60) / interval))
 				port.maxSpeed.shift();
 
 			// füge den aktuellen wert hinzu
-			port.maxSpeed.push(bitPerSec(port.lastIfOutOctets, varbinds[2].value));
+			port.maxSpeed.push(currentBPS);
 
 
 			// speichern der letzten in und out octets zum errechnen des Deltas
-			portAry[index].lastSpeed = varbinds[0].value;
+			portAry[index].lastSpeed = maxSpeed;
 			portAry[index].lastIfInOctets = varbinds[1].value;
 			portAry[index].lastIfOutOctets = varbinds[2].value;
 		}
