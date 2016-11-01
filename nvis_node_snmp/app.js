@@ -7,10 +7,10 @@ var ports = require(__dirname + "/ports.json");
 var udpSocket = dgram.createSocket("udp4");
 
 //zeitintervall in dem die OIDs abgefragt werden
-var interval = 15;
+var interval = 13;
 
 // Länge des betrachteten zeitfensters in minuten
-var window = 10;
+var window = 20;
 
 //intervall für das regelmäsige abfragen der oids
 setInterval(() => {
@@ -43,7 +43,7 @@ function getValues(port, index, portAry) {
 
 	//abfragen der oids
 	session.get(oids, function (error, varbinds) {
-		if (error) {
+		if (error) { // fehler abfangen
 			console.error(error);
 		} else {
 
@@ -53,12 +53,12 @@ function getValues(port, index, portAry) {
 
 
 
-			//String zum versenden erstellen
-			var out = " ifOutOctets: " + varbinds[2].value;
-			out += "	ifOutUtil: " + utili(port.lastIfOutOctets, varbinds[2].value, port.lastSpeed, maxSpeed) + "%";
-			out += "		ifInOctets: " + varbinds[1].value;
-			out += "	ifInUtil: " + utili(port.lastIfInOctets, varbinds[1].value, port.lastSpeed, maxSpeed) + "%";
-			out += "		Speed: " + varbinds[0].value;
+				//String zum versenden erstellen
+			var out = "outOctets: " + varbinds[2].value;
+			out += "	outUtil: " + utili(port.lastIfOutOctets, varbinds[2].value, port.lastSpeed, maxSpeed) + "%";
+			out += "		inOctets: " + varbinds[1].value;
+			out += "	inUtil: " + utili(port.lastIfInOctets, varbinds[1].value, port.lastSpeed, maxSpeed) + "%";
+			out += "		maxSpeed: " + maxSpeed;
 			out += "	Descr: " + port.beschreibung;
 
 
@@ -77,7 +77,7 @@ function getValues(port, index, portAry) {
 				port.maxSpeed.shift();
 
 			// füge den aktuellen wert hinzu
-			port.maxSpeed.push(currentBPS);
+			port.maxSpeed.push(Math.round(currentBPS * 1.3));
 
 
 			// speichern der letzten in und out octets zum errechnen des Deltas
@@ -85,6 +85,7 @@ function getValues(port, index, portAry) {
 			portAry[index].lastIfInOctets = varbinds[1].value;
 			portAry[index].lastIfOutOctets = varbinds[2].value;
 		}
+
 
 	});
 
@@ -108,6 +109,7 @@ function utili(lastVal, currentVal, lastSpeed, currentSpeed) {
 }
 
 //geschwindigkeit in bit/s
+//errechnet die bit/s mit hilfe eines Detlas zwischen den letzten und den aktuell gezählten okteten
 function bitPerSec(lastVal, currentVal) {
 
 	// delta Berechnen

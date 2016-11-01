@@ -7,8 +7,8 @@ server.on("message", (msg, rinfo) => {
 });
 
 server.on('listening', () => {
-  var address = server.address();
-  console.log(`server listening ${address.address}:${address.port}`);
+	var address = server.address();
+	console.log(`server listening ${address.address}:${address.port}`);
 });
 
 server.bind(1337);
