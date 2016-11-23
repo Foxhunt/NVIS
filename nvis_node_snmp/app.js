@@ -90,6 +90,38 @@ function getValues(port, index, portAry) {
 			//ermittle PPS auslastung relativ zum maximal wert des betrachteten Zeitraums
 			let pps = Math.round((currentPPS * 100) / maxPPs);
 
+			// alle werte bei 100 kappen.
+			pps = pps > 100 ? 100 : pps;
+			portUtil = portUtil > 100 ? 100 : portUtil;
+			packetSize = packetSize > 100 ? 100 : packetSize;
+
+			// alle werte unter 0 kappen.
+			pps = pps < 0 ? 0 : pps;
+			portUtil = portUtil < 0 ? 0 : portUtil;
+			packetSize = packetSize < 0 ? 0 : packetSize;
+
+
+
+			//String zum versenden erstellen
+			// R, G, B, pps, pktSize
+			let out = `${rgb(portUtil)}, ${pps}, ${packetSize}`;
+
+			console.log(out);
+
+			/*
+			console.log("octIn", octIn, '\t', octInDelta);
+			console.log("octOut", octOut, '\t', octOutDelta);
+			console.log("pktsIn", pktsIn, '\t', pktsInDelta);
+			console.log("pktsOut", pktsOut, '\t', pktsOutDelta);
+			*/
+
+			//gesammelte daten an das Ziel senden
+			udpSocket.send(out, 0, out.length, 1337, port.ziel, (err) => {
+				if (err)
+					console.error(err);
+			});
+
+
 
 
 			// überprüfe die Anzahl der gespeicherten messpunkte
@@ -112,28 +144,6 @@ function getValues(port, index, portAry) {
 			portAry[index].lastOctOut = octOut;
 			portAry[index].lastPktsIn = pktsIn;
 			portAry[index].lastPktsOut = pktsOut;
-
-
-
-
-			//String zum versenden erstellen
-			// R, G, B, pps, pktSize
-			let out = `${rgb(portUtil)}, ${pps}, ${packetSize}`;
-
-			console.log(out);
-
-			/*
-			console.log("octIn", octIn, '\t', octInDelta);
-			console.log("octOut", octOut, '\t', octOutDelta);
-			console.log("pktsIn", pktsIn, '\t', pktsInDelta);
-			console.log("pktsOut", pktsOut, '\t', pktsOutDelta);
-			*/
-
-			//gesammelte daten an das Ziel senden
-			udpSocket.send(out, 0, out.length, 1337, port.ziel, (err) => {
-				if (err)
-					console.error(err);
-			});
 
 		}
 
@@ -188,7 +198,7 @@ function rgb(t) {
 	var g = 255 * Math.cos(rad);
 	var b = 0;
 
-	var n = 255 / (r > g ? r : g);
+	var n = 255 / (r >= g ? r : g);
 
 	r = Math.round(r * n);
 	g = Math.round(g * n);
