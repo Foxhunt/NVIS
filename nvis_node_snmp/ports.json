@@ -12,10 +12,10 @@
 		"maxSpeed": [],
 		"maxPPS": [],
 		"maxPktSize": [],
-		"lastSpeed": 0,
 		"lastOctIn": 0,
 		"lastOctOut": 0,
 		"lastPktsIn": 0,
 		"lastPktsOut": 0
+
 	}
 ]
