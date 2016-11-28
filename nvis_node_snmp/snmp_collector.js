@@ -13,10 +13,10 @@ class snmp_collector {
 	constructor() {
 
 		//zeitintervall in dem die OIDs abgefragt werden
-		this.interval = 13;
+		this.interval = 11;
 
 		// Länge des betrachteten zeitfensters in minuten
-		this.window = 1;
+		this.window = 5;
 
 		//intervall für das regelmäsige abfragen der oids
 		this.collectionInterval;
@@ -30,6 +30,7 @@ class snmp_collector {
 		this.collectionInterval = setInterval(() => {
 
 			console.log("reading values");
+			console.log("R, G, B, PPS, PKTS");
 
 			ports.forEach(this.getValues, this);
 
@@ -157,9 +158,9 @@ class snmp_collector {
 					}
 
 					// füge die aktuellen Werte hinzu
-					port.maxSpeed.push(Math.round(currentBPS));
-					port.maxPPS.push(Math.round(currentPPS));
-					port.maxPktSize.push(Math.round(currentPktSize));
+					port.maxSpeed.push(Math.round(currentBPS*1.5));
+					port.maxPPS.push(Math.round(currentPPS*1.5));
+					port.maxPktSize.push(Math.round(currentPktSize*1.5));
 
 				}
 
