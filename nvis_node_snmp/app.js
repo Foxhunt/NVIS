@@ -11,19 +11,23 @@ var router = express.Router();
 
 // grüße an den besucher
 router.get('/', (req, res) => {
-	res.send("Hallo!");
+	res.send("Hallo! <br> <a href=\"/nvis/start\">Start</a> <br> <a href=\"/nvis/stop\">Stop</a>");
 });
 
 //starte das SNMP sammeln
 router.get('/start', (req, res) => {
+
 	snmpCollector.start();
-	res.send("Start!");
+
+	res.send("Started! <br> <a href=\"stop\">Stop</a> again!");
 });
 
 //stoppe das SNMP sammeln
 router.get('/stop', (req, res) => {
+
 	snmpCollector.stop();
-	res.send("Stop!");
+
+	res.send("Stoped! <br> <a href=\"start\">Start</a> again!");
 });
 
 //app router benutzen lassen

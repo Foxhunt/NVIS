@@ -46,6 +46,7 @@ class snmp_collector {
 			console.log("stopped SNMP-Collection.")
 
 			clearInterval(this.collectionInterval);
+			this.collectionInterval = null;
 		}
 	}
 
