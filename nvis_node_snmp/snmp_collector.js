@@ -24,26 +24,29 @@ class snmp_collector {
 
 	//startet die regelmäsige Abfrage
 	start() {
+		if (!this.collectionInterval) {
 
-		console.log("started SNMP-Collection.");
+			console.log("started SNMP-Collection.");
 
-		this.collectionInterval = setInterval(() => {
+			this.collectionInterval = setInterval(() => {
 
-			console.log("reading values");
-			console.log("R, G, B, PPS, PKTS");
+				console.log("reading values");
+				console.log("R, G, B, PPS, PKTS");
 
-			ports.forEach(this.getValues, this);
+				ports.forEach(this.getValues, this);
 
-		}, 1000 * this.interval);
-
+			}, 1000 * this.interval);
+		}
 	}
 
 	//stopt die regelmäsige Abfrage
 	stop() {
+		if (this.collectionInterval) {
 
-		console.log("stopped SNMP-Collection.")
+			console.log("stopped SNMP-Collection.")
 
-		clearInterval(this.collectionInterval);
+			clearInterval(this.collectionInterval);
+		}
 	}
 
 	// fragt die oids eines ports ab
@@ -53,6 +56,7 @@ class snmp_collector {
 		let session = snmp.createSession(port.quelle, port.comunity);
 
 		//maxima des betrachteten zeitraums ermitteln
+		//arrays kopieren um die reihenfolge der messungen beizubehalten
 		//absteigend sortieren und das erste element auswählen
 		let maxSpeed = port.maxSpeed.concat().sort(this.srtDesc)[0];
 		let maxPktSize = port.maxPktSize.concat().sort(this.srtDesc)[0];
@@ -77,6 +81,7 @@ class snmp_collector {
 						console.error(snmp.varbindError(varbinds[i]));
 
 					//SNMP Counter speichern
+				let speed = varbinds[0].value;
 				let octIn = varbinds[1].value;
 				let octOut = varbinds[2].value;
 				let pktsIn = varbinds[3].value;
@@ -158,9 +163,9 @@ class snmp_collector {
 					}
 
 					// füge die aktuellen Werte hinzu
-					port.maxSpeed.push(Math.round(currentBPS*1.5));
-					port.maxPPS.push(Math.round(currentPPS*1.5));
-					port.maxPktSize.push(Math.round(currentPktSize*1.5));
+					port.maxSpeed.push(Math.round(currentBPS * 1.5 > speed ? speed : currentBPS * 1.5));
+					port.maxPPS.push(Math.round(currentPPS * 1.5));
+					port.maxPktSize.push(Math.round(currentPktSize * 1.5));
 
 				}
 
