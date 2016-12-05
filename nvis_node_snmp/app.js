@@ -26,21 +26,11 @@ router.get('/stop', (req, res) => {
 	res.send("Stop!");
 });
 
-
-
-
+//app router benutzen lassen
 app.use('/nvis', router);
 
+
+//app auf port lauschen lassen
 app.listen(port, () => {
 	console.log('app listening on port ' + port);
 });
-
-
-
-
-
-//snmpCollector.start();
-
-setTimeout(() => {
-	//snmpCollector.stop();
-}, 1000 * 120);
