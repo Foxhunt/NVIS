@@ -4,6 +4,7 @@
   "description": "Liest SNMP-Daten aus nud verteilt sie über UDP",
   "main": "app.js",
   "dependencies": {
+    "express": "^4.14.0",
     "net-snmp": "^1.1.19"
   },
   "devDependencies": {},
