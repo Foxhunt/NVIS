@@ -135,8 +135,6 @@ class snmp_collector {
 						// R, G, B, pps, pktSize
 						let out = `${this.rgb(portUtil)}, ${pps}, ${packetSize}`;
 
-						console.log(out);
-
 						/*
 						console.log("octIn", octIn, '\t', octInDelta);
 						console.log("octOut", octOut, '\t', octOutDelta);
@@ -148,8 +146,9 @@ class snmp_collector {
 						udpSocket.send(out, 0, out.length, 1337, port.ziel, (err) => {
 							if (err)
 								console.error(err);
-						});
 
+							console.log(out);
+						});
 					}
 
 
