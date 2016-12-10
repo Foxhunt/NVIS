@@ -4,19 +4,21 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Document</title>
+	<link rel="stylesheet" type="text/css" href="index.css">
 </head>
 
 <body>
 
-	<form method="post">
-		<button id="btnStart" formaction="/nvis/start">
-			Start
-		</button>
-
-		<button id="btnStop" formaction="/nvis/stop">
-			Stop
-		</button>
+	<form method="post" action="/nvis">
+		<input type="radio" name="modus" value="1" checked>Modus 1<br>
+		<input type="radio" name="modus" value="2">Modus 2<br>
+		<input type="radio" name="modus" value="3">Modus 3<br>
+		<input type="submit">
 	</form>
+
+	Controle:<br>
+	<a href="/nvis/start" id="start">Start</a>
+	<a href="/nvis/stop" id="stop">Stop</a>
 
 </body>
 

@@ -1,5 +1,6 @@
 //benötigte Module
 const snmpCollector = require("./snmp_collector.js");
+const bodyParser = require("body-parser");
 const express = require("express");
 const app = express();
 
@@ -7,15 +8,16 @@ const app = express();
 var port = process.env.PORT || 8080;
 
 //router für API calls
-var router = express.Router();
+var nvis = express.Router();
 
 // grüße an den besucher
-router.get('/', (req, res) => {
-	res.sendFile(__dirname + "/public/index.html");
+nvis.post('/', (req, res) => {
+	console.log(req.body.modus);
+	res.redirect("/");
 });
 
 //starte das SNMP sammeln
-router.post('/start', (req, res) => {
+nvis.get('/start', (req, res) => {
 
 	snmpCollector.start();
 
@@ -23,7 +25,7 @@ router.post('/start', (req, res) => {
 });
 
 //stoppe das SNMP sammeln
-router.post('/stop', (req, res) => {
+nvis.get('/stop', (req, res) => {
 
 	snmpCollector.stop();
 
@@ -31,8 +33,9 @@ router.post('/stop', (req, res) => {
 });
 
 //app router benutzen lassen
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
-app.use('/nvis', router);
+app.use('/nvis', nvis);
 
 //app auf port lauschen lassen
 app.listen(port, () => {

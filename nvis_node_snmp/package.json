@@ -1,32 +1,33 @@
 {
-	"name": "nvis",
-	"version": "1.0.0",
-	"description": "Liest SNMP-Daten aus nud verteilt sie über UDP",
-	"main": "app.js",
-	"dependencies": {
-		"express": "^4.14.0",
-		"net-snmp": "^1.1.19"
-	},
-	"devDependencies": {
-		"nodemon": "^1.11.0"
-	},
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/Foxhunt/NVIS.git"
-	},
-	"keywords": [
+  "name": "nvis",
+  "version": "1.0.0",
+  "description": "Liest SNMP-Daten aus nud verteilt sie über UDP",
+  "main": "app.js",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "net-snmp": "^1.1.19"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Foxhunt/NVIS.git"
+  },
+  "keywords": [
     "nvis",
     "SNMP",
     "UDP",
     "LED"
   ],
-	"author": "Marco M.",
-	"license": "ISC",
-	"bugs": {
-		"url": "https://github.com/Foxhunt/NVIS/issues"
-	},
-	"homepage": "https://github.com/Foxhunt/NVIS#readme"
+  "author": "Marco M.",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Foxhunt/NVIS/issues"
+  },
+  "homepage": "https://github.com/Foxhunt/NVIS#readme"
 }
