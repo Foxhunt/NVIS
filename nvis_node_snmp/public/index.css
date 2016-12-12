@@ -1,7 +1,10 @@
 a {
 	appearance: button;
-
 	text-decoration: none;
 	color: white;
 	background-color: black;
+}
+
+input[type="radio"]:checked+label {
+	font-weight: bold;
 }
