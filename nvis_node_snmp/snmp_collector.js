@@ -1,9 +1,8 @@
 //benötigte Module
 var snmp = require("net-snmp");
 var dgram = require("dgram");
-var fs = require("fs");
 var ports = require(__dirname + "/ports.json");
-
+var PortGroup = require("/PortGroup.js");
 const pi2 = Math.PI * 2;
 
 var udpSocket = dgram.createSocket("udp4");
