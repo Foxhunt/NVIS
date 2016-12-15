@@ -7,6 +7,8 @@ const pi2 = Math.PI * 2;
 
 var udpSocket = dgram.createSocket("udp4");
 
+//TODO: snmp_collector -> NetLight -> PortGroups benutzen
+
 class snmp_collector {
 
 	constructor() {
