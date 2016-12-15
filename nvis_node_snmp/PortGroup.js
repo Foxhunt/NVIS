@@ -2,7 +2,8 @@
 
 const snmp = require("net-snmp");
 const dgram = require("dgram");
-const udpSocket = dgram.createSocket("udp4");
+const udpSocket = dgram.createSocket({type: "udp4"});
+
 
 class PortGroup {
 
@@ -14,7 +15,7 @@ class PortGroup {
 		this.ports = cfg.ports;
 		this.community = cfg.community;
 		this.ziele = cfg.ziele;
-		this.interval = cfg.interval;
+		this.intervalTime = cfg.interval;
 
 		this.window = 1;
 
@@ -37,12 +38,16 @@ class PortGroup {
 		this.maxPPS = [];
 		this.maxPktSize = [];
 
+		//Current Objekt zum aggregieren der Gruppen Daten
 		this.current = {
 			pktSize: 0,
 			bPS: 0,
 			pPS: 0,
 			speed: 0
 		};
+
+		this.interval = 0;
+
 	}
 
 	// fragt die oids eines ports ab
@@ -79,6 +84,7 @@ class PortGroup {
 				let pktsIn = varbinds[3].value;
 				let pktsOut = varbinds[4].value;
 
+				//prüfen ob letzte werte vorhanden sind
 				let lastWerteVorhanden = (this.lastOctIn[portNr] !== undefined ||
 					this.lastOctOut[portNr] !== undefined ||
 					this.lastPktsIn[portNr] !== undefined ||
@@ -93,17 +99,17 @@ class PortGroup {
 					let pktsInDelta = this.delta(this.lastPktsIn[portNr], pktsIn);
 					let pktsOutDelta = this.delta(this.lastPktsOut[portNr], pktsOut);
 
-
+					//rechne die Port geschwindigkeit auf die Gruppenwerte auf
 					this.current.speed += speed;
 
-					//ermittele die aktuelle Packet größe
+					//ermittele die aktuelle Packet größe und rechne sie auf die Gruppenwerte auf
 					this.current.pktSize += Math.round((octInDelta + octOutDelta) / (pktsInDelta + pktsOutDelta));
 
-					//ermittle aktuelle Bit/s
-					this.current.bPS += Math.round((octInDelta + octOutDelta) / this.interval) * 8;
+					//ermittle aktuelle Bit/s und rechne sie auf die Gruppenwerte auf
+					this.current.bPS += Math.round((octInDelta + octOutDelta) / this.intervalTime) * 8;
 
-					//ermittle aktuelle Packete pro Sekunde
-					this.current.pPS += Math.round((pktsInDelta + pktsOutDelta) / this.interval);
+					//ermittle aktuelle Packete pro Sekunde und rechne sie auf die Gruppenwerte auf
+					this.current.pPS += Math.round((pktsInDelta + pktsOutDelta) / this.intervalTime);
 
 				}
 
@@ -120,6 +126,7 @@ class PortGroup {
 		});
 	}
 
+	// fragt die oids aller Ports ab und fassst sie zusammen
 	getPortGroupValues() {
 
 		//maxima des betrachteten zeitraums ermitteln
@@ -129,10 +136,12 @@ class PortGroup {
 		let maxPktSize = this.maxPktSize.concat().sort(this.srtDesc)[0];
 		let maxPPs = this.maxPPS.concat().sort(this.srtDesc)[0];
 
+		//werte aller ports holen
 		this.ports.forEach((portNr) => {
 			this.getPortValues(portNr);
 		});
 
+		//prüfe ob MaxWerte vorhanden sind
 		let maxWerteVorhanden = (
 			maxSpeed !== undefined || maxPktSize !== undefined || maxPPs !== undefined);
 
@@ -163,8 +172,6 @@ class PortGroup {
 			// R, G, B, pps, pktSize
 			let out = `${this.rgb(portUtil)}, ${pps}, ${packetSize}`;
 
-
-
 			//gesammelte daten an die Ziele senden
 			this.ziele.forEach((ziel) => {
 				udpSocket.send(out, 0, out.length, 1337, ziel, (err) => {
@@ -179,25 +186,26 @@ class PortGroup {
 
 		}
 
+		//prüfe ob current Werte vorhanden sind
 		let currentsVorhanden = (
 			this.current.pktSize !== 0 || this.current.bPS !== 0 || this.current.pPS !== 0 || this.current.speed !== 0);
 
+		//nur Werte in die Max arrays schreiben wenn welche vorhanden sind
 		if (currentsVorhanden) {
-
-
 			// überprüfe die Anzahl der gespeicherten messpunkte
 			// sind mehr als nötig vorhanden lösche das erste
-			if (this.maxSpeed.length >= ((this.window * 60) / this.interval)) {
+			if (this.maxSpeed.length >= ((this.window * 60) / this.intervalTime)) {
 				this.maxSpeed.shift();
 				this.maxPPS.shift();
 				this.maxPktSize.shift();
 			}
 
 			// füge die aktuellen Werte hinzu
-			this.maxSpeed.push(Math.round(this.current.bPS * 1.5 > this.current.speed ? this.current.speed : this.current.bPS * 1.5));
-			this.maxPPS.push(Math.round(this.current.pPS * 1.5));
-			this.maxPktSize.push(Math.round(this.current.pktSize * 1.5));
+			this.maxSpeed.push(Math.round(this.current.bPS * 1.3 > this.current.speed ? this.current.speed : this.current.bPS * 1.3));
+			this.maxPPS.push(Math.round(this.current.pPS * 1.3));
+			this.maxPktSize.push(Math.round(this.current.pktSize * 1.3));
 
+			//current werte wieder zurück setzten
 			this.current = {
 				pktSize: 0,
 				bPS: 0,
@@ -208,6 +216,29 @@ class PortGroup {
 		}
 
 	}
+
+	//startet das oid sammeln dieser Port Gruppe
+	//window : Fenster zum betrachten der Maximalwerte in Minuten.
+	start(window) {
+
+		this.window = window;
+		if (!this.interval) {
+			this.interval = setInterval(() => {
+				this.getPortGroupValues();
+			}, this.intervalTime * 1000);
+
+		}
+
+	};
+
+	//stopt das oid sammeln dieser Port Gruppe
+	stop() {
+		if (this.interval){
+			clearInterval(this.interval);
+			this.interval = null;
+		}
+
+	};
 
 	//errechnet ein delta aus dem letzten und dem aktuellen Wert eines 32-bit SNMP counters
 	// berücksichtigt das zurücksetzten nach überschreiten des Maximal werts
@@ -245,29 +276,26 @@ class PortGroup {
 
 		return out;
 	}
-
-
-
-
 }
 
 
 const cfg = {
 
-	beschreibung: "FoxyBook-local",
-	quelle: "127.0.0.1",
-	ports: [47, 46, 48],
+	beschreibung: "Foxhunt-local",
+	quelle: "192.168.0.101",
+	ports: [28, 29, 30, 31, 32, 33, 4, 6],
 	community: "fox",
-	ziele: ["127.0.0.1"],
+	ziele: ["127.0.0.1", "192.168.0.101"],
 	interval: 11
 
 };
 
-var foxy = new PortGroup(cfg);
+const tests = [];
 
-setInterval(() => {
-	foxy.getPortGroupValues();
-}, 1000 * 11);
+for(let i = 0; i < 500; i++){
+	tests[i] = new PortGroup(cfg);
+	tests[i].start(1);
+}
 
 
 
