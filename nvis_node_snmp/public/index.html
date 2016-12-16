@@ -10,13 +10,25 @@
 <body>
 
 	<form method="post" action="/nvis">
-		<input type="radio" name="modus" value="1" checked>Modus 1<br>
-		<input type="radio" name="modus" value="2">Modus 2<br>
-		<input type="radio" name="modus" value="3">Modus 3<br>
-		<input type="submit">
+		<fieldset>
+			<label>
+				<input type="radio" name="modus" value="1" required>Modus 1
+			</label>
+			<br>
+			<label>
+				<input type="radio" name="modus" value="2" required>Modus 2
+			</label>
+			<br>
+			<label>
+				<input type="radio" name="modus" value="3" required>Modus 3
+			</label>
+			<br>
+			<input type="submit">
+		</fieldset>
 	</form>
 
-	Controle:<br>
+	Controle:
+	<br>
 	<a href="/nvis/start" id="start">Start</a>
 	<a href="/nvis/stop" id="stop">Stop</a>
 	<a href="/nvis/save" id="save">Save</a>
