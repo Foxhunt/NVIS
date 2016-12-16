@@ -1,9 +1,9 @@
 /*jshint esversion: 6*/
-
 const snmp = require("net-snmp");
 const dgram = require("dgram");
-const udpSocket = dgram.createSocket({type: "udp4"});
-
+const udpSocket = dgram.createSocket({
+	type: "udp4"
+});
 
 class PortGroup {
 
@@ -15,7 +15,7 @@ class PortGroup {
 		this.ports = cfg.ports;
 		this.community = cfg.community;
 		this.ziele = cfg.ziele;
-		this.intervalTime = cfg.interval;
+		this.intervalTime = cfg.intervalTime;
 
 		this.window = 0;
 		this.interval = 0;
@@ -177,12 +177,10 @@ class PortGroup {
 					if (err)
 						console.error(err);
 
-					console.log(out);
+					console.log(`an ${ziel}: ${out}`);
 				});
 
 			});
-
-
 		}
 
 		//prüfe ob current Werte vorhanden sind
@@ -221,6 +219,7 @@ class PortGroup {
 	start(window) {
 
 		this.window = 5 || window;
+
 		if (!this.interval) {
 			this.interval = setInterval(() => {
 				this.getPortGroupValues();
@@ -232,11 +231,31 @@ class PortGroup {
 
 	//stopt das oid sammeln dieser Port Gruppe
 	stop() {
-		if (this.interval){
+		if (this.interval) {
 			clearInterval(this.interval);
+
+			//alte Werte Löschen
+			//letzte werte zum bilden des delta
+			this.lastOctIn = [];
+			this.lastOctOut = [];
+			this.lastPktsIn = [];
+			this.lastPktsOut = [];
+
+			//gemessene werte zum ermitteln des Maximums
+			this.maxSpeed = [];
+			this.maxPPS = [];
+			this.maxPktSize = [];
+
+			//Current Objekt zum aggregieren der Gruppen Daten
+			this.current = {
+				pktSize: 0,
+				bPS: 0,
+				pPS: 0,
+				speed: 0
+			};
+
 			this.interval = null;
 		}
-
 	};
 
 	//errechnet ein delta aus dem letzten und dem aktuellen Wert eines 32-bit SNMP counters
