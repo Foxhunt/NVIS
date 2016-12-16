@@ -33,6 +33,14 @@ nvis.get('/stop', (req, res) => {
 	res.redirect("/");
 });
 
+//stoppe das SNMP sammeln
+nvis.get('/save', (req, res) => {
+
+	netLight.saveConfig();
+
+	res.redirect("/");
+});
+
 //app router benutzen lassen
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));

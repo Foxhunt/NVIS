@@ -6,35 +6,35 @@
 		"community": "fox",
 		"ziele": ["127.0.0.1", "192.168.0.101"],
 		"intervalTime": 1
-	},{
+	}, {
 		"beschreibung": "Foxhunt-local",
 		"quelle": "127.0.0.1",
 		"ports": [28, 29, 30, 31, 32, 33, 4, 6],
 		"community": "fox",
 		"ziele": ["127.0.0.1", "192.168.0.101"],
 		"intervalTime": 130
-	},{
+	}, {
 		"beschreibung": "Foxhunt-local",
 		"quelle": "127.0.0.1",
 		"ports": [28, 29, 30, 31, 32, 33, 4, 6],
 		"community": "fox",
 		"ziele": ["127.0.0.1", "192.168.0.101"],
 		"intervalTime": 3
-	},{
+	}, {
 		"beschreibung": "Foxhunt-local",
 		"quelle": "127.0.0.1",
 		"ports": [28, 29, 30, 31, 32, 33, 4, 6],
 		"community": "fox",
 		"ziele": ["127.0.0.1", "192.168.0.101"],
 		"intervalTime": 7
-	},{
+	}, {
 		"beschreibung": "Foxhunt-local",
 		"quelle": "127.0.0.1",
 		"ports": [28, 29, 30, 31, 32, 33, 4, 6],
 		"community": "fox",
 		"ziele": ["127.0.0.1", "192.168.0.101"],
 		"intervalTime": 20
-	},{
+	}, {
 		"beschreibung": "Foxhunt-local",
 		"quelle": "127.0.0.1",
 		"ports": [28, 29, 30, 31, 32, 33, 4, 6],

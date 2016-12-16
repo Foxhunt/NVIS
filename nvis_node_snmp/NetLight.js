@@ -1,8 +1,10 @@
 //benötigte Module
-var PortGroup = require("./PortGroup.js");
+let fs = require("fs");
 
-var PortGroupsCfg = require("./PortGroups.json");
-var portGroups = [];
+let PortGroup = require("./PortGroup.js");
+
+let PortGroupsCfg = require("./PortGroups.json");
+let portGroups = [];
 
 
 //TODO: snmp_collector -> NetLight -> PortGroups benutzen
@@ -33,6 +35,24 @@ class NetLight {
 			portGroup.stop();
 		});
 	}
+
+	//erzeugt ein json File aus portGroups in
+	//dem die PortGruppen als cfg objekte abgelegt sind
+	saveConfig() {
+		fs.writeFile('./data.json', JSON.stringify(portGroups, ["beschreibung", "quelle", "ports", "community", "ziele", "intervalTime"], 4), 'utf-8', err => {
+			if (err)
+				console.error(err);
+		});
+	}
+
+	//erzeigt ein neues PortGroup-Objekt und fügt sie den bestehenden hinzu
+	//
+	addPortGroup(cfg) {
+		portGroups.push(new PortGroup(cfg));
+	}
+
+
+
 }
 
 module.exports = new NetLight();

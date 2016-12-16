@@ -296,25 +296,4 @@ class PortGroup {
 	}
 }
 
-/*
-const cfg = {
-
-	beschreibung: "Foxhunt-local",
-	quelle: "127.0.0.1",
-	ports: [28, 29, 30, 31, 32, 33, 4, 6],
-	community: "fox",
-	ziele: ["127.0.0.1", "192.168.0.101"],
-	interval: 11
-
-};
-
-const tests = [];
-
-for(let i = 0; i < 40; i++){
-	tests[i] = new PortGroup(cfg);
-	tests[i].start(1);
-}
-
-*/
-
 module.exports = PortGroup;
