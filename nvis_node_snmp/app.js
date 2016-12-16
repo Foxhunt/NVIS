@@ -1,5 +1,6 @@
 //benötigte Module
-const snmpCollector = require("./snmp_collector.js");
+const netLight = require("./NetLight.js");
+
 const bodyParser = require("body-parser");
 const express = require("express");
 const app = express();
@@ -19,7 +20,7 @@ nvis.post('/', (req, res) => {
 //starte das SNMP sammeln
 nvis.get('/start', (req, res) => {
 
-	snmpCollector.start();
+	netLight.start();
 
 	res.redirect("/");
 });
@@ -27,7 +28,15 @@ nvis.get('/start', (req, res) => {
 //stoppe das SNMP sammeln
 nvis.get('/stop', (req, res) => {
 
-	snmpCollector.stop();
+	netLight.stop();
+
+	res.redirect("/");
+});
+
+//stoppe das SNMP sammeln
+nvis.get('/save', (req, res) => {
+
+	netLight.saveConfig();
 
 	res.redirect("/");
 });
@@ -40,5 +49,5 @@ app.use('/nvis', nvis);
 //app auf port lauschen lassen
 app.listen(port, () => {
 	console.log('app listening on port ' + port);
-	snmpCollector.start();
+	netLight.start();
 });
