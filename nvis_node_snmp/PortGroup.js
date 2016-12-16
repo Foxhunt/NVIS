@@ -17,7 +17,8 @@ class PortGroup {
 		this.ziele = cfg.ziele;
 		this.intervalTime = cfg.interval;
 
-		this.window = 1;
+		this.window = 0;
+		this.interval = 0;
 
 		//standard OIDs
 		this.speed = "1.3.6.1.2.1.2.2.1.5.";
@@ -25,6 +26,7 @@ class PortGroup {
 		this.octOut = "1.3.6.1.2.1.2.2.1.16.";
 		this.pktsIn = "1.3.6.1.2.1.2.2.1.11.";
 		this.pktsOut = "1.3.6.1.2.1.2.2.1.17.";
+
 		this.pi2 = Math.PI * 2;
 
 		//letzte werte zum bilden des delta
@@ -45,9 +47,6 @@ class PortGroup {
 			pPS: 0,
 			speed: 0
 		};
-
-		this.interval = 0;
-
 	}
 
 	// fragt die oids eines ports ab
@@ -221,7 +220,7 @@ class PortGroup {
 	//window : Fenster zum betrachten der Maximalwerte in Minuten.
 	start(window) {
 
-		this.window = window;
+		this.window = 5 || window;
 		if (!this.interval) {
 			this.interval = setInterval(() => {
 				this.getPortGroupValues();
@@ -278,11 +277,11 @@ class PortGroup {
 	}
 }
 
-
+/*
 const cfg = {
 
 	beschreibung: "Foxhunt-local",
-	quelle: "192.168.0.101",
+	quelle: "127.0.0.1",
 	ports: [28, 29, 30, 31, 32, 33, 4, 6],
 	community: "fox",
 	ziele: ["127.0.0.1", "192.168.0.101"],
@@ -292,11 +291,11 @@ const cfg = {
 
 const tests = [];
 
-for(let i = 0; i < 500; i++){
+for(let i = 0; i < 40; i++){
 	tests[i] = new PortGroup(cfg);
 	tests[i].start(1);
 }
 
-
+*/
 
 module.exports = PortGroup;
