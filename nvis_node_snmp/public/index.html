@@ -11,40 +11,41 @@
 
 	<form method="post" action="/nvis">
 		<fieldset>
-			<label>
-				<input type="radio" name="modus" value="1" required>Modus 1
-			</label>
+
+			<input type="radio" id="modus1" name="modus" value="1" required>
+			<label for="modus1">Modus 1</label>
 			<br>
-			<label>
-				<input type="radio" name="modus" value="2" required>Modus 2
-			</label>
+
+			<input type="radio" id="modus2" name="modus" value="2" required>
+			<label for="modus2">Modus 2</label>
 			<br>
-			<label>
-				<input type="radio" name="modus" value="3" required>Modus 3
-			</label>
+
+			<input type="radio" id="modus3" name="modus" value="3" required>
+			<label for="modus3">Modus 3</label>
 			<br>
+
 			<input type="submit">
 		</fieldset>
 	</form>
 
 	<form action="/nvis/addPortGroup" method="post">
 		<fieldset>
-			<label for="beschreibung">Beschreibung</label>
+			<label for="beschreibung">Beschreibung (Ein name der PortGruppe bsp.: 2.Egate Gebeude 4)</label>
 			<input id="beschreibung" name="beschreibung" type="text">
 			<br>
-			<label for="ip">IP</label>
-			<input id="ip" name="quelle" type="text">
+			<label for="ip">IP (eine ip in gültigem IPv4 Format bsp.: 1.1.1.1)</label>
+			<input id="ip" name="quelle" type="text" pattern="^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$">
 			<br>
-			<label for="ports">Ports</label>
-			<input id="ports" name="ports" type="text">
+			<label for="ports">Ports (Komma getrennte zweistellige Zahlen bsp.: 15, 13)</label>
+			<input id="ports" name="ports" type="text" pattern="^([1-9][1-9]|[1-9])( *, *([1-9][1-9]|[1-9]))*$">
 			<br>
-			<label for="community">Community</label>
+			<label for="community">Community (SNMP Communuty mit leserechten)</label>
 			<input id="community" name="community" type="text">
 			<br>
-			<label for="ziele">Ziele</label>
-			<input id="ziele" name="ziele" type="text">
+			<label for="ziele">Ziele (Komma getrennte IPs bsp.: 1.1.1.1, 2.3.4.5)</label>
+			<input id="ziele" name="ziele" type="text" pattern="^(((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))( *, *((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))*$">
 			<br>
-			<label for="intervalTime">Intervall Zeit</label>
+			<label for="intervalTime">Intervall Zeit (Zeit zwischen zwei updates die gewartet wird)</label>
 			<input id="intervalTime" name="intervalTime" type="number">
 			<br>
 			<input type="submit">

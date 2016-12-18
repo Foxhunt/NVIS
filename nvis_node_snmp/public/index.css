@@ -8,3 +8,11 @@ a {
 input[type="radio"]:checked+label {
 	font-weight: bold;
 }
+
+form[action="/nvis/addPortGroup"] input {
+	display: table-cell
+}
+
+form[action="/nvis/addPortGroup"] label {
+	display: table-cell
+}
