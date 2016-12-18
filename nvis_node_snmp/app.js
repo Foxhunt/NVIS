@@ -24,8 +24,14 @@ nvis.post('/addPortGroup', (req, res) => {
 	cfg.beschreibung = req.body.beschreibung;
 	cfg.quelle = req.body.quelle;
 	cfg.ports = req.body.ports.split(",");
+	cfg.ports.forEach((s, i, a) => {
+		a[i] = parseInt(s.trim());
+	});
 	cfg.community = req.body.community;
-	cfg.ziele = req.body.ziele;
+	cfg.ziele = req.body.ziele.split(",");
+	cfg.ziele.forEach((s, i, a) => {
+		a[i] = s.trim();
+	});
 	cfg.intervalTime = parseInt(req.body.intervalTime);
 
 	console.log(cfg);
