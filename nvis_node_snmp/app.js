@@ -17,6 +17,23 @@ nvis.post('/', (req, res) => {
 	res.redirect("/");
 });
 
+//neuen port hinzufügen
+nvis.post('/addPortGroup', (req, res) => {
+
+	let cfg = {}
+	cfg.beschreibung = req.body.beschreibung;
+	cfg.quelle = req.body.quelle;
+	cfg.ports = req.body.ports.split(",");
+	cfg.community = req.body.community;
+	cfg.ziele = req.body.ziele;
+	cfg.intervalTime = parseInt(req.body.intervalTime);
+
+	console.log(cfg);
+
+
+	res.redirect('/');
+});
+
 //starte das SNMP sammeln
 nvis.get('/start', (req, res) => {
 
@@ -42,7 +59,9 @@ nvis.get('/save', (req, res) => {
 });
 
 //app router benutzen lassen
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({
+	extended: true
+}));
 app.use(express.static('public'));
 app.use('/nvis', nvis);
 

@@ -27,6 +27,30 @@
 		</fieldset>
 	</form>
 
+	<form action="/nvis/addPortGroup" method="post">
+		<fieldset>
+			<label for="beschreibung">Beschreibung</label>
+			<input id="beschreibung" name="beschreibung" type="text">
+			<br>
+			<label for="ip">IP</label>
+			<input id="ip" name="quelle" type="text">
+			<br>
+			<label for="ports">Ports</label>
+			<input id="ports" name="ports" type="text">
+			<br>
+			<label for="community">Community</label>
+			<input id="community" name="community" type="text">
+			<br>
+			<label for="ziele">Ziele</label>
+			<input id="ziele" name="ziele" type="text">
+			<br>
+			<label for="intervalTime">Intervall Zeit</label>
+			<input id="intervalTime" name="intervalTime" type="number">
+			<br>
+			<input type="submit">
+		</fieldset>
+	</form>
+
 	Controle:
 	<br>
 	<a href="/nvis/start" id="start">Start</a>
