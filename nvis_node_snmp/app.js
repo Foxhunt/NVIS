@@ -11,30 +11,33 @@ var modus;
 //port für den Webserver
 var port = process.env.PORT || 8080;
 
-//router für API calls
-var nvis = express.Router();
+//router für nvis-API calls
+var nvisRouter = express.Router();
 
-//req.body objekt zur ferfügung stellen
-app.use(bodyParser.urlencoded({ extended: true }));
+//router für modus-API calls
+var modusRouter = express.Router();
 
 // grüße an den besucher
-app.post('/modus', (req, res) => {
+modusRouter.post('/set', (req, res) => {
 
-	console.log(req.body.modus);
-
-	if(req.body.modus){
+	if(req.body.modus && modus !== req.body.modus){
 
 		//TODO: modus wechseln
 
 		modus = req.body.modus;
+		console.log('changed Modus to: ' + modus);
 	}
 
-	res.send({modus : modus});
+	res.redirect('/');
 
 });
 
+modusRouter.get('/get', (req, res) => {
+	res.send({modus : modus});
+});
+
 //neuen port hinzufügen
-nvis.post('/addPortGroup', (req, res) => {
+nvisRouter.post('/addPortGroup', (req, res) => {
 
 	let cfg = {}
 	cfg.beschreibung = req.body.beschreibung;
@@ -57,7 +60,7 @@ nvis.post('/addPortGroup', (req, res) => {
 });
 
 //starte das SNMP sammeln
-nvis.get('/start', (req, res) => {
+nvisRouter.get('/start', (req, res) => {
 
 	netLight.start();
 
@@ -65,7 +68,7 @@ nvis.get('/start', (req, res) => {
 });
 
 //stoppe das SNMP sammeln
-nvis.get('/stop', (req, res) => {
+nvisRouter.get('/stop', (req, res) => {
 
 	netLight.stop();
 
@@ -73,16 +76,20 @@ nvis.get('/stop', (req, res) => {
 });
 
 //stoppe das SNMP sammeln
-nvis.get('/save', (req, res) => {
+nvisRouter.get('/save', (req, res) => {
 
 	netLight.saveConfig();
 
 	res.redirect("/");
 });
 
-//app router benutzen lassen
+
+//req.body objekt zur ferfügung stellen
+app.use(bodyParser.urlencoded({ extended: true }));
+//router benutzen
 app.use(express.static('public'));
-app.use('/nvis', nvis);
+app.use('/nvis', nvisRouter);
+app.use('/modus', modusRouter);
 
 //app auf port lauschen lassen
 app.listen(port, () => {

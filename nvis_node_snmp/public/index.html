@@ -2,16 +2,17 @@
 <html lang="en">
 
 <head>
+	<title>NVIS</title>
 	<meta charset="UTF-8">
 	<title>Document</title>
 	<link rel="stylesheet" type="text/css" href="index.css">
-	<script src="jquery.min.js" async></script>
-	<script src="main.js" async></script>
+	<script src="jquery.min.js"></script>
+	<script src="main.js"></script>
 </head>
 
 <body>
 
-	<form>
+	<form method="post" action="/modus/set">
 		<fieldset>
 
 			<input type="radio" id="NetLight" name="modus" value="NetLight" required>
@@ -26,10 +27,10 @@
 			<label for="modus3">Modus 3</label>
 			<br>
 
+			<input type="submit">
 
 		</fieldset>
 	</form>
-	<button id="submitModus">Senden</button>
 
 	<form action="/nvis/addPortGroup" method="post">
 		<fieldset>
