@@ -5,28 +5,31 @@
 	<meta charset="UTF-8">
 	<title>Document</title>
 	<link rel="stylesheet" type="text/css" href="index.css">
+	<script src="jquery.min.js" async></script>
+	<script src="main.js" async></script>
 </head>
 
 <body>
 
-	<form method="post" action="/nvis">
+	<form>
 		<fieldset>
 
-			<input type="radio" id="modus1" name="modus" value="1" required>
-			<label for="modus1">Modus 1</label>
+			<input type="radio" id="NetLight" name="modus" value="NetLight" required>
+			<label for="NetLight">NetLight</label>
 			<br>
 
-			<input type="radio" id="modus2" name="modus" value="2" required>
+			<input type="radio" id="modus2" name="modus" value="modus2" required>
 			<label for="modus2">Modus 2</label>
 			<br>
 
-			<input type="radio" id="modus3" name="modus" value="3" required>
+			<input type="radio" id="modus3" name="modus" value="modus3" required>
 			<label for="modus3">Modus 3</label>
 			<br>
 
-			<input type="submit">
+
 		</fieldset>
 	</form>
+	<button id="submitModus">Senden</button>
 
 	<form action="/nvis/addPortGroup" method="post">
 		<fieldset>

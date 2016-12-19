@@ -5,16 +5,32 @@ const bodyParser = require("body-parser");
 const express = require("express");
 const app = express();
 
+//aktueller Modus
+var modus;
+
 //port für den Webserver
 var port = process.env.PORT || 8080;
 
 //router für API calls
 var nvis = express.Router();
 
+//req.body objekt zur ferfügung stellen
+app.use(bodyParser.urlencoded({ extended: true }));
+
 // grüße an den besucher
-nvis.post('/', (req, res) => {
+app.post('/modus', (req, res) => {
+
 	console.log(req.body.modus);
-	res.redirect("/");
+
+	if(req.body.modus){
+
+		//TODO: modus wechseln
+
+		modus = req.body.modus;
+	}
+
+	res.send({modus : modus});
+
 });
 
 //neuen port hinzufügen
@@ -65,9 +81,6 @@ nvis.get('/save', (req, res) => {
 });
 
 //app router benutzen lassen
-app.use(bodyParser.urlencoded({
-	extended: true
-}));
 app.use(express.static('public'));
 app.use('/nvis', nvis);
 
@@ -75,4 +88,5 @@ app.use('/nvis', nvis);
 app.listen(port, () => {
 	console.log('app listening on port ' + port);
 	netLight.start();
+	modus = "NetLight";
 });
