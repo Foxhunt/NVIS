@@ -15,7 +15,7 @@ var port = process.env.PORT || 8080;
 //router für modus-API calls
 var modusRouter = express.Router();
 
-// grüße an den besucher
+//route zum setzten der Modi
 modusRouter.post('/set', (req, res) => {
 
 	if (req.body.modus && modus !== req.body.modus) {
@@ -30,6 +30,7 @@ modusRouter.post('/set', (req, res) => {
 
 });
 
+//route zum erfahren der Modi
 modusRouter.get('/get', (req, res) => {
 	res.send({
 		modus: modus
@@ -41,7 +42,7 @@ modusRouter.get('/get', (req, res) => {
 //router für nvis-API calls
 var nvisRouter = express.Router();
 
-//neuen port hinzufügen
+//Route um neuen port hinzuzufügen
 nvisRouter.post('/addPortGroup', (req, res) => {
 
 	let cfg = {}
@@ -60,6 +61,7 @@ nvisRouter.post('/addPortGroup', (req, res) => {
 
 	console.log(cfg);
 
+	//portGruppe hinzufügen
 	netLight.addPortGroup(cfg);
 
 	res.redirect('/');
@@ -81,7 +83,7 @@ nvisRouter.get('/stop', (req, res) => {
 	res.redirect("/");
 });
 
-//stoppe das SNMP sammeln
+//Speichere die aktuelle PortGruppen Konfiguration
 nvisRouter.get('/save', (req, res) => {
 
 	netLight.saveConfig();

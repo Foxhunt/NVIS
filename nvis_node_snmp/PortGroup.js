@@ -17,7 +17,10 @@ class PortGroup {
 		this.ziele = cfg.ziele;
 		this.snmpGetIntervalTime = cfg.snmpGetIntervalTime;
 
+		//Maximale lebensdauer einer Messung für das Floating Max
 		this.window = 0;
+
+		//variable für die interval id
 		this.interval = 0;
 
 		//standard OIDs
@@ -27,6 +30,7 @@ class PortGroup {
 		this.pktsIn = "1.3.6.1.2.1.2.2.1.11.";
 		this.pktsOut = "1.3.6.1.2.1.2.2.1.17.";
 
+		//2PI
 		this.pi2 = Math.PI * 2;
 
 		//letzte werte zum bilden des delta
@@ -66,10 +70,9 @@ class PortGroup {
 		//abfragen der oids
 		session.get(oids, (error, varbinds) => {
 			if (error) { // fehler abfangen
-				console.log("ERR!");
 				console.error(error);
 			} else {
-
+				//snmp internal error handling
 				for (var i = 0; i < varbinds.length; i++) {
 					if (snmp.isVarbindError(varbinds[i])) {
 						console.error(snmp.varbindError(varbinds[i]));
@@ -218,8 +221,10 @@ class PortGroup {
 	//window : Fenster zum betrachten der Maximalwerte in Minuten.
 	start(window) {
 
+		//setzte das betrachtungs fester auf 5 minuten oder den übergebenen Wert
 		this.window = 5 || window;
 
+		//wenn kein interval vorhanden ist starte einen
 		if (!this.interval) {
 			this.interval = setInterval(() => {
 				this.getPortGroupValues();
@@ -231,22 +236,23 @@ class PortGroup {
 
 	//stopt das oid sammeln dieser Port Gruppe
 	stop() {
+		//nur stoppen wenn ein intervall läuft
 		if (this.interval) {
 			clearInterval(this.interval);
 
 			//alte Werte Löschen
-			//letzte werte zum bilden des delta
+			//letzte werte zum bilden der deltas zurücksetzten
 			this.lastOctIn = [];
 			this.lastOctOut = [];
 			this.lastPktsIn = [];
 			this.lastPktsOut = [];
 
-			//gemessene werte zum ermitteln des Maximums
+			//gemessene werte zurücksetzten
 			this.maxSpeed = [];
 			this.maxPPS = [];
 			this.maxPktSize = [];
 
-			//Current Objekt zum aggregieren der Gruppen Daten
+			//Current Objekt zurücksetzten
 			this.current = {
 				pktSize: 0,
 				bPS: 0,

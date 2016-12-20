@@ -7,8 +7,6 @@ let PortGroupsCfg = require("./PortGroups.json");
 let portGroups = [];
 
 
-//TODO: snmp_collector -> NetLight -> PortGroups benutzen
-
 class NetLight {
 
 	constructor() {
