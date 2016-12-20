@@ -11,8 +11,6 @@ var modus;
 //port für den Webserver
 var port = process.env.PORT || 8080;
 
-//router für nvis-API calls
-var nvisRouter = express.Router();
 
 //router für modus-API calls
 var modusRouter = express.Router();
@@ -20,7 +18,7 @@ var modusRouter = express.Router();
 // grüße an den besucher
 modusRouter.post('/set', (req, res) => {
 
-	if(req.body.modus && modus !== req.body.modus){
+	if (req.body.modus && modus !== req.body.modus) {
 
 		//TODO: modus wechseln
 
@@ -33,8 +31,15 @@ modusRouter.post('/set', (req, res) => {
 });
 
 modusRouter.get('/get', (req, res) => {
-	res.send({modus : modus});
+	res.send({
+		modus: modus
+	});
 });
+
+
+
+//router für nvis-API calls
+var nvisRouter = express.Router();
 
 //neuen port hinzufügen
 nvisRouter.post('/addPortGroup', (req, res) => {
@@ -51,10 +56,11 @@ nvisRouter.post('/addPortGroup', (req, res) => {
 	cfg.ziele.forEach((s, i, a) => {
 		a[i] = s.trim();
 	});
-	cfg.intervalTime = parseInt(req.body.intervalTime);
+	cfg.snmpGetIntervalTime = parseInt(req.body.snmpGetIntervalTime);
 
 	console.log(cfg);
 
+	netLight.addPortGroup(cfg);
 
 	res.redirect('/');
 });
@@ -85,7 +91,10 @@ nvisRouter.get('/save', (req, res) => {
 
 
 //req.body objekt zur ferfügung stellen
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({
+	extended: true
+}));
+
 //router benutzen
 app.use(express.static('public'));
 app.use('/nvis', nvisRouter);

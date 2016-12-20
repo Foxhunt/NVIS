@@ -39,16 +39,19 @@ class NetLight {
 	//erzeugt ein json File aus portGroups in
 	//dem die PortGruppen als cfg objekte abgelegt sind
 	saveConfig() {
-		fs.writeFile('./data.json', JSON.stringify(portGroups, ["beschreibung", "quelle", "ports", "community", "ziele", "intervalTime"], 4), 'utf-8', err => {
+		fs.writeFile('./data.json', JSON.stringify(portGroups, ["beschreibung", "quelle", "ports", "community", "ziele", "snmpGetIntervalTime"], 4), 'utf-8', err => {
 			if (err)
 				console.error(err);
 		});
 	}
 
-	//erzeigt ein neues PortGroup-Objekt und fügt sie den bestehenden hinzu
-	//
+	//erzeigt ein neues PortGroup-Objekt startet ihn
+	//und fügt sie den bestehenden hinzu
 	addPortGroup(cfg) {
-		portGroups.push(new PortGroup(cfg));
+		let newPortGroup = new PortGroup(cfg);
+		newPortGroup.start();
+		portGroups.push(newPortGroup);
+		this.saveConfig();
 	}
 
 

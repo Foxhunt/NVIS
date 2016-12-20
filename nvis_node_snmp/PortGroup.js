@@ -15,7 +15,7 @@ class PortGroup {
 		this.ports = cfg.ports;
 		this.community = cfg.community;
 		this.ziele = cfg.ziele;
-		this.intervalTime = cfg.intervalTime;
+		this.snmpGetIntervalTime = cfg.snmpGetIntervalTime;
 
 		this.window = 0;
 		this.interval = 0;
@@ -105,10 +105,10 @@ class PortGroup {
 					this.current.pktSize += Math.round((octInDelta + octOutDelta) / (pktsInDelta + pktsOutDelta));
 
 					//ermittle aktuelle Bit/s und rechne sie auf die Gruppenwerte auf
-					this.current.bPS += Math.round((octInDelta + octOutDelta) / this.intervalTime) * 8;
+					this.current.bPS += Math.round((octInDelta + octOutDelta) / this.snmpGetIntervalTime) * 8;
 
 					//ermittle aktuelle Packete pro Sekunde und rechne sie auf die Gruppenwerte auf
-					this.current.pPS += Math.round((pktsInDelta + pktsOutDelta) / this.intervalTime);
+					this.current.pPS += Math.round((pktsInDelta + pktsOutDelta) / this.snmpGetIntervalTime);
 
 				}
 
@@ -191,7 +191,7 @@ class PortGroup {
 		if (currentsVorhanden) {
 			// überprüfe die Anzahl der gespeicherten messpunkte
 			// sind mehr als nötig vorhanden lösche das erste
-			if (this.maxSpeed.length >= ((this.window * 60) / this.intervalTime)) {
+			if (this.maxSpeed.length >= ((this.window * 60) / this.snmpGetIntervalTime)) {
 				this.maxSpeed.shift();
 				this.maxPPS.shift();
 				this.maxPktSize.shift();
@@ -223,7 +223,7 @@ class PortGroup {
 		if (!this.interval) {
 			this.interval = setInterval(() => {
 				this.getPortGroupValues();
-			}, this.intervalTime * 1000);
+			}, this.snmpGetIntervalTime * 1000);
 
 		}
 
