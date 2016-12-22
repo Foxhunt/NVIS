@@ -5,6 +5,6 @@
 		"ports": [6],
 		"community": "fox",
 		"ziele": ["192.168.43.22"],
-		"intervalTime": 1
+		"snmpGetIntervalTime": 13
 	}
 ]
