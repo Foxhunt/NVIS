@@ -20,9 +20,9 @@
 //WLAN und UDP config
 
 //Netwerkname
-const char* ssid = "Mein Netzwerk";
+const char* ssid = "Foxynet";
 //Netzwerkpassword
-const char* password = "**********************";
+const char* password = "foxynet1";
 
 //IP config
 
@@ -125,7 +125,7 @@ void setup() {
   FastLED.addLeds<NEOPIXEL, 13>(leds, NUM_LEDS_PER_STRIP);
   FastLED.addLeds<NEOPIXEL, 14>(leds, NUM_LEDS_PER_STRIP);
   FastLED.addLeds<NEOPIXEL, 15>(leds, NUM_LEDS_PER_STRIP);
-  FastLED.addLeds<NEOPIXEL, 16>(leds, NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<NEOPIXEL, 2>(leds, NUM_LEDS_PER_STRIP);
   //Helligkeit setzen mit BRIGHTNESS (siehe oben)
   FastLED.setBrightness(  BRIGHTNESS );
 
@@ -136,6 +136,8 @@ void setup() {
   l[0] = 0;
   l[1] = 0;
   l[2] = 0;
+
+  m[0] = 5;
 
   delayLed = 1;
 
@@ -154,12 +156,15 @@ void loop() {
   switch(m[0]){
     case 0: // LEDs aus
             modeAllOff();
+            break;
     case 1: // Netzwerktraffic
             if(ledMode != 1){  // Alle LED zu Anfang schwarz färben
               modeAllOff();
               ledMode = 1;
             }
             modeNetworkTraffic();
+             // warte und dann mach weiter
+            FastLED.delay((5000 / UPDATES_PER_SECOND) / delayLed); // 0% = 2000ms 100%= 200ms
             break;
     case 2: // statische Fachschaftsfarben
             if(ledMode != 2){
@@ -168,15 +173,15 @@ void loop() {
             }
             modeAllOneColor(m[1],m[2], m[3]);
             break;
-    default: break;
+    default:
+            modeAllOneColor(255,0, 0);
+            break;
   }
 
 
 
   // zeig an
   FastLED.show();
-  // warte und dann mach weiter
-  FastLED.delay((5000 / UPDATES_PER_SECOND) / delayLed); // 0% = 2000ms 100%= 200ms
 }
 
 
@@ -215,22 +220,6 @@ void udpRead(){
   }
 }
 
-
-void contrLED(uint8_t ir, uint8_t ig, uint8_t ib) {
-  CRGB lastLED;
-
-  lastLED = CRGB(ir, ig, ib);
-
-  CRGB temp;
-
-  for (int dot = 0; dot < NUM_LEDS_PER_STRIP; dot++) {
-
-    temp = lastLED;
-    lastLED = leds[dot];
-    leds[dot] = temp;
-  }
-}
-
 /**
  * modeNetworkTraffic() visualisiert die Netzwerkauslastung und zeigt sie auf den LEDs an.
  */
@@ -257,7 +246,7 @@ void modeNetworkTraffic(){
       l[2] = 0;
       Serial.printf("black\n");
     }
-  if (counter == 5){
+  if (counter == 6){
     counter = 1;
   } else {
     counter++;
@@ -267,6 +256,21 @@ void modeNetworkTraffic(){
   //variablen delay definieren
   delayLed = (m[4] / 10);
   if (delayLed == 0) delayLed = 1;
+}
+
+void contrLED(uint8_t ir, uint8_t ig, uint8_t ib) {
+  CRGB lastLED;
+
+  lastLED = CRGB(ir, ig, ib);
+
+  CRGB temp;
+
+  for (int dot = 0; dot < NUM_LEDS_PER_STRIP; dot++) {
+
+    temp = lastLED;
+    lastLED = leds[dot];
+    leds[dot] = temp;
+  }
 }
 
 

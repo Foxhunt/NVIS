@@ -2,9 +2,9 @@
 	{
 		"beschreibung": "Foxhunt-local",
 		"quelle": "127.0.0.1",
-		"ports": [28, 13, 6],
+		"ports": [6],
 		"community": "fox",
-		"ziele": ["127.0.0.1", "192.168.0.101"],
-		"snmpGetIntervalTime": 3
+		"ziele": ["192.168.43.22"],
+		"intervalTime": 1
 	}
 ]
