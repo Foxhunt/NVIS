@@ -1,5 +1,6 @@
 //benötigte Module
 const netLight = require("./NetLight.js");
+const staticLight = require("./StaticLight.js");
 
 const bodyParser = require("body-parser");
 const express = require("express");
@@ -7,6 +8,7 @@ const app = express();
 
 //aktueller Modus
 var modus;
+var runnigMode;
 
 //port für den Webserver
 var port = process.env.PORT || 8080;
@@ -23,6 +25,23 @@ modusRouter.post('/set', (req, res) => {
 		//TODO: modus wechseln
 
 		modus = req.body.modus;
+
+		switch (modus) {
+		case "NetLight":
+			runnigMode.stop();
+			runnigMode = netLight;
+			runnigMode.start();
+			break;
+		case "StaticLight":
+			runnigMode.stop();
+			runnigMode = staticLight;
+			runnigMode.start();
+			break;
+		default:
+			runnigMode.stop();
+			break;
+		}
+
 		console.log('changed Modus to: ' + modus);
 	}
 
@@ -70,7 +89,11 @@ nvisRouter.post('/addPortGroup', (req, res) => {
 //starte das SNMP sammeln
 nvisRouter.get('/start', (req, res) => {
 
-	netLight.start();
+	if (!runnigMode.running) {
+
+		runnigMode.start();
+
+	}
 
 	res.redirect("/");
 });
@@ -78,7 +101,11 @@ nvisRouter.get('/start', (req, res) => {
 //stoppe das SNMP sammeln
 nvisRouter.get('/stop', (req, res) => {
 
-	netLight.stop();
+	if (runnigMode.running) {
+
+		runnigMode.stop();
+
+	}
 
 	res.redirect("/");
 });
@@ -107,4 +134,5 @@ app.listen(port, () => {
 	console.log('app listening on port ' + port);
 	netLight.start();
 	modus = "NetLight";
+	runnigMode = netLight;
 });

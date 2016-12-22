@@ -16,22 +16,34 @@ class NetLight {
 			portGroups.push(new PortGroup(cfg));
 		});
 
+		this.running = false;
+
 	}
 
 	//startet die regelmäsige Abfrage
 	start() {
-		console.log("Starting SNMP collection on all PortGroups");
-		portGroups.forEach((portGroup) => {
-			portGroup.start();
-		});
+		if (!this.running) {
+
+			console.log("Starting SNMP collection on all PortGroups");
+			portGroups.forEach((portGroup) => {
+				portGroup.start();
+			});
+			this.running = true;
+
+		}
 	}
 
 	//stopt die regelmäsige Abfrage
 	stop() {
-		console.log("Stopping SNMP collection on all PortGroups");
-		portGroups.forEach((portGroup) => {
-			portGroup.stop();
-		});
+		if (this.running) {
+
+			console.log("Stopping SNMP collection on all PortGroups");
+			portGroups.forEach((portGroup) => {
+				portGroup.stop();
+			});
+			this.running = false;
+
+		}
 	}
 
 	//erzeugt ein json File aus portGroups in

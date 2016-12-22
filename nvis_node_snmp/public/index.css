@@ -9,6 +9,10 @@ input[type="radio"]:checked+label {
 	font-weight: bold;
 }
 
+form#NetLightForm {
+	display: none;
+}
+
 form[action="/nvis/addPortGroup"] input {
 	display: table-cell
 }

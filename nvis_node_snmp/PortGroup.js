@@ -121,7 +121,7 @@ class PortGroup {
 				this.lastOctOut[portNr] = octOut;
 				this.lastPktsIn[portNr] = pktsIn;
 				this.lastPktsOut[portNr] = pktsOut;
-
+/**/
 			}
 
 
@@ -222,7 +222,7 @@ class PortGroup {
 	start(window) {
 
 		//setzte das betrachtungs fester auf 5 minuten oder den übergebenen Wert
-		this.window = 5 || window;
+		this.window = 1 || window;
 
 		//wenn kein interval vorhanden ist starte einen
 		if (!this.interval) {

@@ -19,20 +19,19 @@
 			<label for="NetLight">NetLight</label>
 			<br>
 
-			<input type="radio" id="modus2" name="modus" value="modus2" required>
-			<label for="modus2">Modus 2</label>
+			<input type="radio" id="StaticLight" name="modus" value="StaticLight" required>
+			<label for="StaticLight">StaticLight</label>
 			<br>
 
 			<input type="radio" id="modus3" name="modus" value="modus3" required>
 			<label for="modus3">Modus 3</label>
 			<br>
-
 			<input type="submit">
 
 		</fieldset>
 	</form>
 
-	<form action="/nvis/addPortGroup" method="post">
+	<form id="NetLightForm" action="/nvis/addPortGroup" method="post">
 		<fieldset>
 			<label for="beschreibung">Beschreibung (Ein name der PortGruppe bsp.: 2.Egate Gebeude 4)</label>
 			<input id="beschreibung" name="beschreibung" type="text" required>
