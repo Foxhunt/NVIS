@@ -5,20 +5,70 @@ const bodyParser = require("body-parser");
 const express = require("express");
 const app = express();
 
+//aktueller Modus
+var modus;
+
 //port für den Webserver
 var port = process.env.PORT || 8080;
 
-//router für API calls
-var nvis = express.Router();
 
-// grüße an den besucher
-nvis.post('/', (req, res) => {
-	console.log(req.body.modus);
-	res.redirect("/");
+//router für modus-API calls
+var modusRouter = express.Router();
+
+//route zum setzten der Modi
+modusRouter.post('/set', (req, res) => {
+
+	if (req.body.modus && modus !== req.body.modus) {
+
+		//TODO: modus wechseln
+
+		modus = req.body.modus;
+		console.log('changed Modus to: ' + modus);
+	}
+
+	res.redirect('/');
+
+});
+
+//route zum erfahren der Modi
+modusRouter.get('/get', (req, res) => {
+	res.send({
+		modus: modus
+	});
+});
+
+
+
+//router für nvis-API calls
+var nvisRouter = express.Router();
+
+//Route um neuen port hinzuzufügen
+nvisRouter.post('/addPortGroup', (req, res) => {
+
+	let cfg = {}
+	cfg.beschreibung = req.body.beschreibung;
+	cfg.quelle = req.body.quelle;
+	cfg.ports = req.body.ports.split(",");
+	cfg.ports.forEach((s, i, a) => {
+		a[i] = parseInt(s.trim());
+	});
+	cfg.community = req.body.community;
+	cfg.ziele = req.body.ziele.split(",");
+	cfg.ziele.forEach((s, i, a) => {
+		a[i] = s.trim();
+	});
+	cfg.snmpGetIntervalTime = parseInt(req.body.snmpGetIntervalTime);
+
+	console.log(cfg);
+
+	//portGruppe hinzufügen
+	netLight.addPortGroup(cfg);
+
+	res.redirect('/');
 });
 
 //starte das SNMP sammeln
-nvis.get('/start', (req, res) => {
+nvisRouter.get('/start', (req, res) => {
 
 	netLight.start();
 
@@ -26,28 +76,35 @@ nvis.get('/start', (req, res) => {
 });
 
 //stoppe das SNMP sammeln
-nvis.get('/stop', (req, res) => {
+nvisRouter.get('/stop', (req, res) => {
 
 	netLight.stop();
 
 	res.redirect("/");
 });
 
-//stoppe das SNMP sammeln
-nvis.get('/save', (req, res) => {
+//Speichere die aktuelle PortGruppen Konfiguration
+nvisRouter.get('/save', (req, res) => {
 
 	netLight.saveConfig();
 
 	res.redirect("/");
 });
 
-//app router benutzen lassen
-app.use(bodyParser.urlencoded({ extended: true }));
+
+//req.body objekt zur ferfügung stellen
+app.use(bodyParser.urlencoded({
+	extended: true
+}));
+
+//router benutzen
 app.use(express.static('public'));
-app.use('/nvis', nvis);
+app.use('/nvis', nvisRouter);
+app.use('/modus', modusRouter);
 
 //app auf port lauschen lassen
 app.listen(port, () => {
 	console.log('app listening on port ' + port);
 	netLight.start();
+	modus = "NetLight";
 });

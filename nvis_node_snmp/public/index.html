@@ -2,26 +2,55 @@
 <html lang="en">
 
 <head>
+	<title>NVIS</title>
 	<meta charset="UTF-8">
 	<title>Document</title>
 	<link rel="stylesheet" type="text/css" href="index.css">
+	<script src="jquery.min.js"></script>
+	<script src="main.js"></script>
 </head>
 
 <body>
 
-	<form method="post" action="/nvis">
+	<form action="/modus/set" method="post">
 		<fieldset>
-			<label>
-				<input type="radio" name="modus" value="1" required>Modus 1
-			</label>
+
+			<input type="radio" id="NetLight" name="modus" value="NetLight" required>
+			<label for="NetLight">NetLight</label>
 			<br>
-			<label>
-				<input type="radio" name="modus" value="2" required>Modus 2
-			</label>
+
+			<input type="radio" id="modus2" name="modus" value="modus2" required>
+			<label for="modus2">Modus 2</label>
 			<br>
-			<label>
-				<input type="radio" name="modus" value="3" required>Modus 3
-			</label>
+
+			<input type="radio" id="modus3" name="modus" value="modus3" required>
+			<label for="modus3">Modus 3</label>
+			<br>
+
+			<input type="submit">
+
+		</fieldset>
+	</form>
+
+	<form action="/nvis/addPortGroup" method="post">
+		<fieldset>
+			<label for="beschreibung">Beschreibung (Ein name der PortGruppe bsp.: 2.Egate Gebeude 4)</label>
+			<input id="beschreibung" name="beschreibung" type="text" required>
+			<br>
+			<label for="ip">IP (eine ip in gültigem IPv4 Format bsp.: 1.1.1.1)</label>
+			<input id="ip" name="quelle" type="text" pattern="^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
+			<br>
+			<label for="ports">Ports (Komma getrennte zweistellige Zahlen bsp.: 15, 13)</label>
+			<input id="ports" name="ports" type="text" pattern="^([1-9][0-9]|[1-9])( *, *([1-9][0-9]|[1-9]))*$" required>
+			<br>
+			<label for="community">Community (SNMP Communuty mit leserechten)</label>
+			<input id="community" name="community" type="text">
+			<br>
+			<label for="ziele">Ziele (Komma getrennte IPs bsp.: 1.1.1.1, 2.3.4.5)</label>
+			<input id="ziele" name="ziele" type="text" pattern="^(((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))( *, *((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))*$" required>
+			<br>
+			<label for="snmpGetIntervalTime">Intervall Zeit (Zeit zwischen zwei updates die gewartet wird)</label>
+			<input id="snmpGetIntervalTime" name="snmpGetIntervalTime" type="number" required>
 			<br>
 			<input type="submit">
 		</fieldset>
