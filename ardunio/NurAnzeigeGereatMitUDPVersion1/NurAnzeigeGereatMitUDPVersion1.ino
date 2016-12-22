@@ -24,14 +24,14 @@ WiFiUDP Udp;
 //Port auf den die Pakete eintreffen sollen
 unsigned int localUdpPort = 1337;
 //Buffer fuer reinkommende Pakete
-char incomingPacket[255]; 
+char incomingPacket[255];
 
 //Variabelen fuer die Leds
 
 //Anzahl der Leds pro Ledstreifen (30 Leds pro Meter)
 #define NUM_LEDS_PER_STRIP 20
 //Helligkeit
-#define BRIGHTNESS  100 
+#define BRIGHTNESS  100
 //Ledtyp
 #define LED_TYPE    WS2811
 //Reihenfolge der Farben
@@ -64,7 +64,7 @@ int counter;
 void setup() {
   //????
   Serial.begin(115200);
-  
+
   //Information mit welchem Netzwerk der Mikrocontroller sich verbinden moechte
   Serial.printf("Connecting to %s ", ssid);
 
@@ -90,7 +90,7 @@ void setup() {
 
 
   // Starte Sicherheits delay von 3s
-  delay( 3000 ); 
+  delay( 3000 );
   //Nur fuer einen Ledstreifen
   //FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
   //Fuer mehrere Ledstreifen
@@ -138,11 +138,11 @@ void loop() {
         pt = strtok (NULL, " ,");
         i++;
     }
-    
+
   }
-  
+
   contrLED(l[0], l[1], l[2]);
-  //Debuging: sehen ob die Farben richtig dargestellt werden welche kommen 
+  //Debuging: sehen ob die Farben richtig dargestellt werden welche kommen
   Serial.printf ("l: %i, %i, %i\n",l[0], l[1], l[2]);
   Serial.printf ("m: %i, %i, %i\n",m[0], m[1], m[2]);
 
@@ -151,11 +151,11 @@ void loop() {
   //mindestens eine Led soll leuchten
   if(paketlaenge == 0) paketlaenge = 1;
 
-  //farben der Ledes 
+  //farben der Ledes
   //um so höher die Auslastung um so mehr Leds sollen leuchten
   //um so niederiger die Auslastung um so weniger Leds sollen leuchten
   if (counter <= paketlaenge) {
-      //Farbe    
+      //Farbe
       l[0] = m[0];
       l[1] = m[1];
       l[2] = m[2];
@@ -179,11 +179,11 @@ void loop() {
   int delayLed = (m[3] / 10);
   if (delayLed == 0) delayLed = 1;
 
-  //warte und dann mach weiter 
+  //warte und dann mach weiter
   FastLED.delay((5000 / UPDATES_PER_SECOND) / delayLed); // 0% = 2000ms 100%= 200ms
-  
 
- 
+
+
 }
 
 /**
@@ -198,17 +198,17 @@ void ledFearben() {
   //welche Leds gehoeren zu sammen
 
   //zusammen gehorige leds faerben
-  
 
 
 
-  
+
+
   /*/
   //Faeben der Leds
   int paketlaenge = m[4]/20;
 
   if(paketlaenge == 0) paketlaenge = 1;
-  
+
   if (counter <= paketlaenge) {
       l[0] = m[0];
       l[1] = m[1];

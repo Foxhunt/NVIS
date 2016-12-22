@@ -169,7 +169,7 @@ class PortGroup {
 
 			//String zum versenden erstellen
 			// R, G, B, pps, pktSize
-			let out = `${this.rgb(portUtil)}, ${pps}, ${packetSize}`;
+			let out = `1, ${this.rgb(portUtil)}, ${pps}, ${packetSize}`;
 
 			//gesammelte daten an die Ziele senden
 			this.ziele.forEach((ziel) => {
