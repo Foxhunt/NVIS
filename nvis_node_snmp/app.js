@@ -57,6 +57,25 @@ modusRouter.get('/get', (req, res) => {
 });
 
 
+//router für StaticLight-API calls
+var staticLightRouter = express.Router();
+
+staticLightRouter.post('/setColor', (req, res) => {
+
+	staticLight.color = req.body.color;
+
+	res.redirect('/');
+
+});
+
+
+staticLightRouter.get('/getColor', (req, res) => {
+	res.send({
+		color: staticLight.color
+	})
+});
+
+
 
 //router für nvis-API calls
 var nvisRouter = express.Router();
@@ -128,6 +147,7 @@ app.use(bodyParser.urlencoded({
 app.use(express.static('public'));
 app.use('/nvis', nvisRouter);
 app.use('/modus', modusRouter);
+app.use('/staticLight', staticLightRouter);
 
 //app auf port lauschen lassen
 app.listen(port, () => {

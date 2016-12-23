@@ -6,5 +6,9 @@ $('document').ready(() => {
 		$('#' + data.modus + "Form").css('display', 'block');
 	});
 
+	$.get('/staticLight/getColor', data => {
+		$('input.jscolor').prop('value', data.color);
+	});
+
 
 });

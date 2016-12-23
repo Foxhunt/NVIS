@@ -13,6 +13,10 @@ form#NetLightForm {
 	display: none;
 }
 
+form#StaticLightForm {
+	display: none;
+}
+
 form[action="/nvis/addPortGroup"] input {
 	display: table-cell
 }

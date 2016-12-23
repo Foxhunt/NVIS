@@ -7,6 +7,7 @@
 	<title>Document</title>
 	<link rel="stylesheet" type="text/css" href="index.css">
 	<script src="jquery.min.js"></script>
+	<script src="jscolor.min.js"></script>
 	<script src="main.js"></script>
 </head>
 
@@ -53,6 +54,16 @@
 			<br>
 			<input type="submit">
 		</fieldset>
+	</form>
+
+	<form id="StaticLightForm" action="/staticLight/setColor" method="post">
+
+		<fieldset>
+			Color: <input class="jscolor" name="color">
+			<br>
+			<input type="submit">
+		</fieldset>
+
 	</form>
 
 	Controle:
