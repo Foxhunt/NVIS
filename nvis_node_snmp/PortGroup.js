@@ -134,9 +134,9 @@ class PortGroup {
 		//maxima des betrachteten zeitraums ermitteln
 		//arrays kopieren um die reihenfolge der messungen beizubehalten
 		//absteigend sortieren und das erste element auswählen
-		let maxSpeed = this.maxSpeed.concat().sort(this.srtDesc)[0];
-		let maxPktSize = this.maxPktSize.concat().sort(this.srtDesc)[0];
-		let maxPPs = this.maxPPS.concat().sort(this.srtDesc)[0];
+		let maxSpeed = this.maxSpeed/*.concat()*/.sort(this.srtDesc)[0];
+		let maxPktSize = this.maxPktSize/*.concat()*/.sort(this.srtDesc)[0];
+		let maxPPs = this.maxPPS/*.concat()*/.sort(this.srtDesc)[0];
 
 		//werte aller ports holen
 		this.ports.forEach((portNr) => {
@@ -201,9 +201,9 @@ class PortGroup {
 			}
 
 			// füge die aktuellen Werte hinzu
-			this.maxSpeed.push(Math.round(this.current.bPS * 1.3 > this.current.speed ? this.current.speed : this.current.bPS * 1.3));
-			this.maxPPS.push(Math.round(this.current.pPS * 1.3));
-			this.maxPktSize.push(Math.round(this.current.pktSize * 1.3));
+			this.maxSpeed.push(Math.round(this.current.bPS > this.current.speed ? this.current.speed : this.current.bPS * 1.3));
+			this.maxPPS.push(Math.round(this.current.pPS));
+			this.maxPktSize.push(Math.round(this.current.pktSize));
 
 			//current werte wieder zurück setzten
 			this.current = {
@@ -222,7 +222,7 @@ class PortGroup {
 	start(window) {
 
 		//setzte das betrachtungs fester auf 5 minuten oder den übergebenen Wert
-		this.window = 1 || window;
+		this.window = 10 || window;
 
 		//wenn kein interval vorhanden ist starte einen
 		if (!this.interval) {
