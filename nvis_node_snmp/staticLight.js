@@ -1,3 +1,4 @@
+/*jshint esversion: 6*/
 const dgram = require('dgram');
 
 const udpSocket = dgram.createSocket({
@@ -15,27 +16,26 @@ class staticLight {
 	constructor() {
 
 		this.interval = null;
-		this.running = false;
 		this.color = "00ff00";
-		this.out;
 
 	}
 
-	start() {
-
+	get out() {
 
 		let one = parseInt(this.color.charAt(0) + this.color.charAt(1), 16);
 		let two = parseInt(this.color.charAt(2) + this.color.charAt(3), 16);
 		let three = parseInt(this.color.charAt(4) + this.color.charAt(5), 16);
 
+		return `2, ${one}, ${two}, ${three}`;
+	}
 
-		let out = `2, ${one}, ${two}, ${three}`;
+	start() {
 
-		udpSocket.send(out, 0, out.length, 1337, ziel, (err) => {
+		udpSocket.send(this.out, 0, this.out.length, 1337, ziel, (err) => {
 			if (err)
 				console.error(err);
 
-			console.log("send: " + out + " an: " + ziel);
+			console.log("send: " + this.out + " an: " + ziel);
 
 		});
 
@@ -45,41 +45,35 @@ class staticLight {
 
 			this.interval = setInterval(() => {
 
-				let one = parseInt(this.color.charAt(0) + this.color.charAt(1), 16);
-				let two = parseInt(this.color.charAt(2) + this.color.charAt(3), 16);
-				let three = parseInt(this.color.charAt(4) + this.color.charAt(5), 16);
-
-
-				let out = `2, ${one}, ${two}, ${three}`;
-
-				udpSocket.send(out, 0, out.length, 1337, ziel, (err) => {
+				udpSocket.send(this.out, 0, this.out.length, 1337, ziel, (err) => {
 					if (err)
 						console.error(err);
 
-					console.log("send: " + out + " an: " + ziel);
+					console.log("send: " + this.out + " an: " + ziel);
 
 				});
 			}, 1000);
-
-			this.running = true;
 		}
 	}
 
 	stop() {
 		if (this.interval) {
 
-			udpSocket.send(stop, 0, out.length, 1337, ziel, (err) => {
+			udpSocket.send(stop, 0, 1, 1337, ziel, (err) => {
 				if (err)
 					console.error(err);
-
-				console.log("send: " + out + " an: " + ziel);
 
 			});
 
 			clearInterval(this.interval);
+
 			this.interval = null;
-			this.running = false;
+
 		}
+	}
+
+	get running() {
+		return (this.interval != null);
 	}
 
 
