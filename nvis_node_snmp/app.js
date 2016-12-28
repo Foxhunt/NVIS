@@ -64,6 +64,8 @@ staticLightRouter.post('/setColor', (req, res) => {
 
 	staticLight.color = req.body.color;
 
+	runnigMode.start();
+
 	res.redirect('/');
 
 });

@@ -8,8 +8,6 @@ var stop = "0";
 
 var ziel = "192.168.0.22";
 
-
-
 class staticLight {
 
 	constructor() {
@@ -17,17 +15,14 @@ class staticLight {
 		this.interval = null;
 		this.running = false;
 		this.color = "00ff00";
-		this.out;
 
 	}
 
 	start() {
 
-
 		let one = parseInt(this.color.charAt(0) + this.color.charAt(1), 16);
 		let two = parseInt(this.color.charAt(2) + this.color.charAt(3), 16);
 		let three = parseInt(this.color.charAt(4) + this.color.charAt(5), 16);
-
 
 		let out = `2, ${one}, ${two}, ${three}`;
 
@@ -39,16 +34,13 @@ class staticLight {
 
 		});
 
-
 		if (!this.interval) {
-
 
 			this.interval = setInterval(() => {
 
 				let one = parseInt(this.color.charAt(0) + this.color.charAt(1), 16);
 				let two = parseInt(this.color.charAt(2) + this.color.charAt(3), 16);
 				let three = parseInt(this.color.charAt(4) + this.color.charAt(5), 16);
-
 
 				let out = `2, ${one}, ${two}, ${three}`;
 
@@ -59,7 +51,7 @@ class staticLight {
 					console.log("send: " + out + " an: " + ziel);
 
 				});
-			}, 1000);
+			}, 10000);
 
 			this.running = true;
 		}
@@ -68,12 +60,9 @@ class staticLight {
 	stop() {
 		if (this.interval) {
 
-			udpSocket.send(stop, 0, out.length, 1337, ziel, (err) => {
+			udpSocket.send(stop, 0, stop.length, 1337, ziel, (err) => {
 				if (err)
 					console.error(err);
-
-				console.log("send: " + out + " an: " + ziel);
-
 			});
 
 			clearInterval(this.interval);
@@ -81,10 +70,6 @@ class staticLight {
 			this.running = false;
 		}
 	}
-
-
-
 }
-
 
 module.exports = new staticLight();
