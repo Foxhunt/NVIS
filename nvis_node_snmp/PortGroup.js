@@ -134,9 +134,9 @@ class PortGroup {
 		//maxima des betrachteten zeitraums ermitteln
 		//arrays kopieren um die reihenfolge der messungen beizubehalten
 		//absteigend sortieren und das erste element auswählen
-		let maxSpeed = this.maxSpeed/*.concat()*/.sort(this.srtDesc)[0];
-		let maxPktSize = this.maxPktSize/*.concat()*/.sort(this.srtDesc)[0];
-		let maxPPs = this.maxPPS/*.concat()*/.sort(this.srtDesc)[0];
+		let maxSpeed = this.maxSpeed.concat().sort(this.srtDesc)[0];
+		let maxPktSize = this.maxPktSize.concat().sort(this.srtDesc)[0];
+		let maxPPs = this.maxPPS.concat().sort(this.srtDesc)[0];
 
 		//werte aller ports holen
 		this.ports.forEach((portNr) => {
@@ -201,7 +201,7 @@ class PortGroup {
 			}
 
 			// füge die aktuellen Werte hinzu
-			this.maxSpeed.push(Math.round(this.current.bPS > this.current.speed ? this.current.speed : this.current.bPS * 1.3));
+			this.maxSpeed.push(Math.round(this.current.bPS > this.current.speed ? this.current.speed : this.current.bPS));
 			this.maxPPS.push(Math.round(this.current.pPS));
 			this.maxPktSize.push(Math.round(this.current.pktSize));
 
@@ -232,7 +232,7 @@ class PortGroup {
 
 		}
 
-	};
+	}
 
 	//stopt das oid sammeln dieser Port Gruppe
 	stop() {
@@ -262,7 +262,7 @@ class PortGroup {
 
 			this.interval = null;
 		}
-	};
+	}
 
 	//errechnet ein delta aus dem letzten und dem aktuellen Wert eines 32-bit SNMP counters
 	// berücksichtigt das zurücksetzten nach überschreiten des Maximal werts
