@@ -1,5 +1,6 @@
 //benötigte Module
 const netLight = require("./NetLight.js");
+const staticLight = require("./StaticLight.js");
 
 const bodyParser = require("body-parser");
 const express = require("express");
@@ -7,6 +8,7 @@ const app = express();
 
 //aktueller Modus
 var modus;
+var runnigMode;
 
 //port für den Webserver
 var port = process.env.PORT || 8080;
@@ -23,6 +25,23 @@ modusRouter.post('/set', (req, res) => {
 		//TODO: modus wechseln
 
 		modus = req.body.modus;
+
+		switch (modus) {
+		case "NetLight":
+			runnigMode.stop();
+			runnigMode = netLight;
+			runnigMode.start();
+			break;
+		case "StaticLight":
+			runnigMode.stop();
+			runnigMode = staticLight;
+			runnigMode.start();
+			break;
+		default:
+			runnigMode.stop();
+			break;
+		}
+
 		console.log('changed Modus to: ' + modus);
 	}
 
@@ -35,6 +54,51 @@ modusRouter.get('/get', (req, res) => {
 	res.send({
 		modus: modus
 	});
+});
+
+//starte das SNMP sammeln
+modusRouter.get('/start', (req, res) => {
+
+	if (!runnigMode.running) {
+
+		runnigMode.start();
+
+	}
+
+	res.redirect("/");
+});
+
+//stoppe das SNMP sammeln
+modusRouter.get('/stop', (req, res) => {
+
+	if (runnigMode.running) {
+
+		runnigMode.stop();
+
+	}
+
+	res.redirect("/");
+});
+
+
+//router für StaticLight-API calls
+var staticLightRouter = express.Router();
+
+staticLightRouter.post('/setColor', (req, res) => {
+
+	staticLight.color = req.body.color;
+
+	runnigMode.start();
+
+	res.redirect('/');
+
+});
+
+
+staticLightRouter.get('/getColor', (req, res) => {
+	res.send({
+		color: staticLight.color
+	})
 });
 
 
@@ -67,22 +131,6 @@ nvisRouter.post('/addPortGroup', (req, res) => {
 	res.redirect('/');
 });
 
-//starte das SNMP sammeln
-nvisRouter.get('/start', (req, res) => {
-
-	netLight.start();
-
-	res.redirect("/");
-});
-
-//stoppe das SNMP sammeln
-nvisRouter.get('/stop', (req, res) => {
-
-	netLight.stop();
-
-	res.redirect("/");
-});
-
 //Speichere die aktuelle PortGruppen Konfiguration
 nvisRouter.get('/save', (req, res) => {
 
@@ -101,10 +149,12 @@ app.use(bodyParser.urlencoded({
 app.use(express.static('public'));
 app.use('/nvis', nvisRouter);
 app.use('/modus', modusRouter);
+app.use('/staticLight', staticLightRouter);
 
 //app auf port lauschen lassen
 app.listen(port, () => {
 	console.log('app listening on port ' + port);
 	netLight.start();
 	modus = "NetLight";
+	runnigMode = netLight;
 });
