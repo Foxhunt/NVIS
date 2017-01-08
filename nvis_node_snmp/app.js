@@ -56,6 +56,30 @@ modusRouter.get('/get', (req, res) => {
 	});
 });
 
+//starte das SNMP sammeln
+modusRouter.get('/start', (req, res) => {
+
+	if (!runnigMode.running) {
+
+		runnigMode.start();
+
+	}
+
+	res.redirect("/");
+});
+
+//stoppe das SNMP sammeln
+modusRouter.get('/stop', (req, res) => {
+
+	if (runnigMode.running) {
+
+		runnigMode.stop();
+
+	}
+
+	res.redirect("/");
+});
+
 
 //router für StaticLight-API calls
 var staticLightRouter = express.Router();
@@ -105,30 +129,6 @@ nvisRouter.post('/addPortGroup', (req, res) => {
 	netLight.addPortGroup(cfg);
 
 	res.redirect('/');
-});
-
-//starte das SNMP sammeln
-nvisRouter.get('/start', (req, res) => {
-
-	if (!runnigMode.running) {
-
-		runnigMode.start();
-
-	}
-
-	res.redirect("/");
-});
-
-//stoppe das SNMP sammeln
-nvisRouter.get('/stop', (req, res) => {
-
-	if (runnigMode.running) {
-
-		runnigMode.stop();
-
-	}
-
-	res.redirect("/");
 });
 
 //Speichere die aktuelle PortGruppen Konfiguration

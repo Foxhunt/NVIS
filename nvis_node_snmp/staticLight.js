@@ -29,15 +29,17 @@ class staticLight {
 
 	start() {
 
-		udpSocket.send(this.out, 0, this.out.length, 1337, ziel, (err) => {
-			if (err)
-				console.error(err);
-
-			console.log("send: " + this.out + " an: " + ziel);
-
-		});
-
 		if (!this.interval) {
+
+			console.log("Starting StaticLight.");
+
+			udpSocket.send(this.out, 0, this.out.length, 1337, ziel, (err) => {
+				if (err)
+					console.error(err);
+
+				console.log("send: " + this.out + " an: " + ziel);
+
+			});
 
 			this.interval = setInterval(() => {
 
@@ -55,6 +57,8 @@ class staticLight {
 
 	stop() {
 		if (this.interval) {
+
+			console.log("Stopping StaticLight.");
 
 			udpSocket.send(stop, 0, 1, 1337, ziel, (err) => {
 				if (err)

@@ -152,13 +152,13 @@ class PortGroup {
 		if (maxWerteVorhanden) {
 
 			//ermittle port auslastung relativ zum maximal wert des betrachteten Zeitraums
-			let portUtil = Math.round((this.current.bPS * 100) / maxSpeed);
+			let portUtil = Math.round(this.current.bPS / maxSpeed * 100);
 
 			//ermittle PacketSize auslastung relativ zum maximal wert des betrachteten Zeitraums
-			let packetSize = Math.round((this.current.pktSize * 100) / maxPktSize);
+			let packetSize = Math.round(this.current.pktSize / maxPktSize * 100);
 
 			//ermittle PPS auslastung relativ zum maximal wert des betrachteten Zeitraums
-			let pps = Math.round((this.current.pPS * 100) / maxPPs);
+			let pps = Math.round(this.current.pPS / maxPPs * 100);
 
 			// alle werte bei 100 kappen.
 			pps = pps > 100 ? 100 : pps;

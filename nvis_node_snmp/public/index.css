@@ -1,8 +1,18 @@
 a {
 	appearance: button;
+	/* CSS3 */
+	-webkit-appearance: button;
+	/* Safari and Chrome */
+	-moz-appearance: button;
+	/* Firefox */
+	-ms-appearance: button;
+	/* Internet Explorer */
+	-o-appearance: button;
+	/* Opera */
+	cursor: default;
 	text-decoration: none;
-	color: white;
-	background-color: black;
+	color: black;
+	padding: 1px 6px;
 }
 
 input[type="radio"]:checked+label {
