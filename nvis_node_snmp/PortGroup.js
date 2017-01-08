@@ -1,9 +1,13 @@
 /*jshint esversion: 6*/
 const snmp = require("net-snmp");
 const dgram = require("dgram");
+const fs = require("fs");
+const nl = require('os').EOL;
 const udpSocket = dgram.createSocket({
 	type: "udp4"
 });
+
+const pi2 = Math.PI * 2;
 
 class PortGroup {
 
@@ -29,9 +33,6 @@ class PortGroup {
 		this.octOut = "1.3.6.1.2.1.2.2.1.16.";
 		this.pktsIn = "1.3.6.1.2.1.2.2.1.11.";
 		this.pktsOut = "1.3.6.1.2.1.2.2.1.17.";
-
-		//2PI
-		this.pi2 = Math.PI * 2;
 
 		//letzte werte zum bilden des delta
 		this.lastOctIn = [];
@@ -152,27 +153,35 @@ class PortGroup {
 		if (maxWerteVorhanden) {
 
 			//ermittle port auslastung relativ zum maximal wert des betrachteten Zeitraums
-			let portUtil = Math.round(this.current.bPS / maxSpeed * 100);
+			let portUtil = this.current.bPS / maxSpeed;
 
 			//ermittle PacketSize auslastung relativ zum maximal wert des betrachteten Zeitraums
-			let packetSize = Math.round(this.current.pktSize / maxPktSize * 100);
+			let packetSize = this.current.pktSize / maxPktSize;
 
 			//ermittle PPS auslastung relativ zum maximal wert des betrachteten Zeitraums
-			let pps = Math.round(this.current.pPS / maxPPs * 100);
+			let pps = this.current.pPS / maxPPs;
 
 			// alle werte bei 100 kappen.
-			pps = pps > 100 ? 100 : pps;
-			portUtil = portUtil > 100 ? 100 : portUtil;
-			packetSize = packetSize > 100 ? 100 : packetSize;
+			pps = pps > 1 ? 1 : pps;
+			portUtil = portUtil > 1 ? 1 : portUtil;
+			packetSize = packetSize > 1 ? 1 : packetSize;
 
 			// alle werte unter 0 kappen.
+			/*
 			pps = pps < 0 ? 0 : pps;
 			portUtil = portUtil < 0 ? 0 : portUtil;
 			packetSize = packetSize < 0 ? 0 : packetSize;
+			*/
 
 			//String zum versenden erstellen
-			// R, G, B, pps, pktSize
-			let out = `1, ${this.rgb(portUtil)}, ${pps}, ${packetSize}`;
+			// portUtil, pps, pktSize
+			let out = `1, ${portUtil}, ${pps}, ${packetSize}`;
+
+			let log = `${this.current.bPS}, ${this.current.pktSize}, ${this.current.pPS}, ${maxSpeed}, ${maxPktSize}, ${maxPPs}, "${out}"`;
+
+			this.out(log);
+
+
 
 			//gesammelte daten an die Ziele senden
 			this.ziele.forEach((ziel) => {
@@ -230,6 +239,8 @@ class PortGroup {
 				this.getPortGroupValues();
 			}, this.snmpGetIntervalTime * 1000);
 
+			this.out(`bPS, pktSize, pPS, maxSpeed, maxPktSize, maxPPs, out`);
+
 		}
 
 	}
@@ -284,7 +295,7 @@ class PortGroup {
 	// Ermittelt RGB werte zwischen Grün und Rot aus %-Werten zwischen 0 und 100
 	rgb(t) {
 
-		var rad = (t / 100) * (this.pi2 / 4);
+		var rad = (t) * (pi2 / 4);
 
 		var r = 255 * Math.sin(rad);
 		var g = 255 * Math.cos(rad);
@@ -300,6 +311,19 @@ class PortGroup {
 
 		return out;
 	}
-}
+
+
+	// Daten in eine Output File Schreiben
+	out(out) {
+
+		let now = new Date().toLocaleString() +" | ";
+
+		fs.appendFile( "./logs/" + this.beschreibung + ".txt", now+out+nl, (err) => {
+			if (err) throw err;
+			console.log(this.beschreibung + ".txt appended");
+		});
+	}
+
+} // ende PortGroup
 
 module.exports = PortGroup;
