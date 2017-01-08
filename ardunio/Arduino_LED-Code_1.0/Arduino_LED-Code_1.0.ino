@@ -20,16 +20,16 @@
 //WLAN und UDP config
 
 //Netwerkname
-const char* ssid = "Foxynet";
+const char* ssid = "Foxhunt-Net";
 //Netzwerkpassword
-const char* password = "foxynet1";
+const char* password = "striker1991";
 
 //IP config
 
 //IP des Microcontrollers
-IPAddress staticIP(192, 168, 43, 22);
+IPAddress staticIP(192, 168, 0, 22);
 //Gateway
-IPAddress gateway(192, 168, 43, 1);
+IPAddress gateway(192, 168, 0, 1);
 //Subnetzmaske
 IPAddress subnet(255, 255, 255, 0);
 
@@ -246,7 +246,7 @@ void modeNetworkTraffic(){
       l[2] = 0;
       Serial.printf("black\n");
     }
-  if (counter == 6){
+  if (counter == 7){
     counter = 1;
   } else {
     counter++;
