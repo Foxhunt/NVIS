@@ -121,7 +121,7 @@ class PortGroup {
 				this.lastOctOut[portNr] = octOut;
 				this.lastPktsIn[portNr] = pktsIn;
 				this.lastPktsOut[portNr] = pktsOut;
-
+/**/
 			}
 
 
@@ -152,13 +152,13 @@ class PortGroup {
 		if (maxWerteVorhanden) {
 
 			//ermittle port auslastung relativ zum maximal wert des betrachteten Zeitraums
-			let portUtil = Math.round((this.current.bPS * 100) / maxSpeed);
+			let portUtil = Math.round(this.current.bPS / maxSpeed * 100);
 
 			//ermittle PacketSize auslastung relativ zum maximal wert des betrachteten Zeitraums
-			let packetSize = Math.round((this.current.pktSize * 100) / maxPktSize);
+			let packetSize = Math.round(this.current.pktSize / maxPktSize * 100);
 
 			//ermittle PPS auslastung relativ zum maximal wert des betrachteten Zeitraums
-			let pps = Math.round((this.current.pPS * 100) / maxPPs);
+			let pps = Math.round(this.current.pPS / maxPPs * 100);
 
 			// alle werte bei 100 kappen.
 			pps = pps > 100 ? 100 : pps;
@@ -201,9 +201,9 @@ class PortGroup {
 			}
 
 			// füge die aktuellen Werte hinzu
-			this.maxSpeed.push(Math.round(this.current.bPS * 1.3 > this.current.speed ? this.current.speed : this.current.bPS * 1.3));
-			this.maxPPS.push(Math.round(this.current.pPS * 1.3));
-			this.maxPktSize.push(Math.round(this.current.pktSize * 1.3));
+			this.maxSpeed.push(Math.round(this.current.bPS > this.current.speed ? this.current.speed : this.current.bPS));
+			this.maxPPS.push(Math.round(this.current.pPS));
+			this.maxPktSize.push(Math.round(this.current.pktSize));
 
 			//current werte wieder zurück setzten
 			this.current = {
@@ -222,7 +222,7 @@ class PortGroup {
 	start(window) {
 
 		//setzte das betrachtungs fester auf 5 minuten oder den übergebenen Wert
-		this.window = 5 || window;
+		this.window = 10 || window;
 
 		//wenn kein interval vorhanden ist starte einen
 		if (!this.interval) {
@@ -232,7 +232,7 @@ class PortGroup {
 
 		}
 
-	};
+	}
 
 	//stopt das oid sammeln dieser Port Gruppe
 	stop() {
@@ -262,7 +262,7 @@ class PortGroup {
 
 			this.interval = null;
 		}
-	};
+	}
 
 	//errechnet ein delta aus dem letzten und dem aktuellen Wert eines 32-bit SNMP counters
 	// berücksichtigt das zurücksetzten nach überschreiten des Maximal werts

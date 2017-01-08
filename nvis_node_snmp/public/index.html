@@ -7,6 +7,7 @@
 	<title>Document</title>
 	<link rel="stylesheet" type="text/css" href="index.css">
 	<script src="jquery.min.js"></script>
+	<script src="jscolor.min.js"></script>
 	<script src="main.js"></script>
 </head>
 
@@ -19,20 +20,19 @@
 			<label for="NetLight">NetLight</label>
 			<br>
 
-			<input type="radio" id="modus2" name="modus" value="modus2" required>
-			<label for="modus2">Modus 2</label>
+			<input type="radio" id="StaticLight" name="modus" value="StaticLight" required>
+			<label for="StaticLight">StaticLight</label>
 			<br>
 
 			<input type="radio" id="modus3" name="modus" value="modus3" required>
-			<label for="modus3">Modus 3</label>
+			<label for="modus3">Zukunfts Orientierte Lösung</label>
 			<br>
-
 			<input type="submit">
 
 		</fieldset>
 	</form>
 
-	<form action="/nvis/addPortGroup" method="post">
+	<form id="NetLightForm" action="/nvis/addPortGroup" method="post">
 		<fieldset>
 			<label for="beschreibung">Beschreibung (Ein name der PortGruppe bsp.: 2.Egate Gebeude 4)</label>
 			<input id="beschreibung" name="beschreibung" type="text" required>
@@ -56,11 +56,25 @@
 		</fieldset>
 	</form>
 
+	<form id="StaticLightForm" action="/staticLight/setColor" method="post">
+
+		<fieldset>
+			Color:
+			<input class="jscolor" name="color">
+			<br>
+			<input type="submit">
+		</fieldset>
+
+	</form>
+
 	Controle:
 	<br>
-	<a href="/nvis/start" id="start">Start</a>
-	<a href="/nvis/stop" id="stop">Stop</a>
-	<a href="/nvis/save" id="save">Save</a>
+	<a href="/modus/start" id="start">
+		Start
+	</a>
+	<a href="/modus/stop" id="stop">
+		Stop
+	</a>
 
 </body>
 
