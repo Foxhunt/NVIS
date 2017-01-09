@@ -153,29 +153,29 @@ class PortGroup {
 		if (maxWerteVorhanden) {
 
 			//ermittle port auslastung relativ zum maximal wert des betrachteten Zeitraums
-			let portUtil = this.current.bPS / maxSpeed;
+			let portUtil = Math.round(this.current.bPS / maxSpeed * 100);
 
 			//ermittle PacketSize auslastung relativ zum maximal wert des betrachteten Zeitraums
-			let packetSize = this.current.pktSize / maxPktSize;
+			let packetSize = Math.round(this.current.pktSize / maxPktSize * 100);
 
 			//ermittle PPS auslastung relativ zum maximal wert des betrachteten Zeitraums
-			let pps = this.current.pPS / maxPPs;
+			let pps = Math.round(this.current.pPS / maxPPs * 100);
 
 			// alle werte bei 100 kappen.
-			pps = pps > 1 ? 1 : pps;
-			portUtil = portUtil > 1 ? 1 : portUtil;
-			packetSize = packetSize > 1 ? 1 : packetSize;
+			pps = pps > 100 ? 100 : pps;
+			portUtil = portUtil > 100 ? 100 : portUtil;
+			packetSize = packetSize > 100 ? 100 : packetSize;
 
 			// alle werte unter 0 kappen.
-			/*
+
 			pps = pps < 0 ? 0 : pps;
 			portUtil = portUtil < 0 ? 0 : portUtil;
 			packetSize = packetSize < 0 ? 0 : packetSize;
-			*/
+
 
 			//String zum versenden erstellen
 			// portUtil, pps, pktSize
-			let out = `1, ${portUtil}, ${pps}, ${packetSize}`;
+			let out = `1, ${this.rgb(portUtil)}, ${pps}, ${packetSize}`;
 
 			let log = `${this.current.bPS}, ${this.current.pktSize}, ${this.current.pPS}, ${maxSpeed}, ${maxPktSize}, ${maxPPs}, "${out}"`;
 
@@ -295,7 +295,7 @@ class PortGroup {
 	// Ermittelt RGB werte zwischen Grün und Rot aus %-Werten zwischen 0 und 100
 	rgb(t) {
 
-		var rad = (t) * (pi2 / 4);
+		var rad = (t/100) * (pi2 / 4);
 
 		var r = 255 * Math.sin(rad);
 		var g = 255 * Math.cos(rad);
