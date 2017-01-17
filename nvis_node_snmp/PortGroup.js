@@ -122,7 +122,7 @@ class PortGroup {
 				this.lastOctOut[portNr] = octOut;
 				this.lastPktsIn[portNr] = pktsIn;
 				this.lastPktsOut[portNr] = pktsOut;
-/**/
+				/**/
 			}
 
 
@@ -295,7 +295,7 @@ class PortGroup {
 	// Ermittelt RGB werte zwischen Grün und Rot aus %-Werten zwischen 0 und 100
 	rgb(t) {
 
-		var rad = (t/100) * (pi2 / 4);
+		var rad = (t / 100) * (pi2 / 4);
 
 		var r = 255 * Math.sin(rad);
 		var g = 255 * Math.cos(rad);
@@ -316,9 +316,16 @@ class PortGroup {
 	// Daten in eine Output File Schreiben
 	out(out) {
 
-		let now = new Date().toLocaleString() +" | ";
+		//prüfe ob ./logs existiert, wenn nicht erstelle den Ornder
+		if (!fs.existsSync("./logs")) {
+			fs.mkdir("./logs", (err) => {
+				if (err) throw err;
+			});
+		}
 
-		fs.appendFile( "./logs/" + this.beschreibung + ".txt", now+out+nl, (err) => {
+		let now = new Date().toLocaleString() + " | ";
+
+		fs.appendFile("./logs/" + this.beschreibung + ".txt", now + out + nl, (err) => {
 			if (err) throw err;
 			console.log(this.beschreibung + ".txt appended");
 		});
