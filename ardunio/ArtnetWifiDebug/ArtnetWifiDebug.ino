@@ -108,9 +108,6 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
 	  leds[ (int) universe][i] = CRGB(data[i*3], data[i*3+1], data[i*3+2]);
 	}
 
-
-
-
 }
 
 void setup()

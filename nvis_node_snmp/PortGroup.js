@@ -316,7 +316,7 @@ class PortGroup {
 	// Daten in eine Output File Schreiben
 	out(out) {
 
-		//prüfe ob ./logs existiert, wenn nicht erstelle den Ornder
+		//prüfe ob /logs existiert, wenn nicht erstelle den Ornder
 		if (!fs.existsSync("./logs")) {
 			fs.mkdir("./logs", (err) => {
 				if (err) throw err;
