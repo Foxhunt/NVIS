@@ -16,6 +16,7 @@
 #include <FastLED.h>
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
+#include <ArtnetWifi.h>
 
 //WLAN und UDP config
 
@@ -33,6 +34,7 @@ IPAddress gateway(192, 168, 0, 1);
 //Subnetzmaske
 IPAddress subnet(255, 255, 255, 0);
 
+
 //UDP als Wlan Protokl nutzen
 WiFiUDP Udp;
 
@@ -41,10 +43,14 @@ unsigned int localUdpPort = 1337;
 //Buffer fuer reinkommende Pakete
 char incomingPacket[255];
 
+// artnet variablen
+WiFiUDP UdpSend;
+ArtnetWifi artnet;
+
 //Variabelen fuer die Leds
 
 //Anzahl der Leds pro Ledstreifen (30 Leds pro Meter)
-#define NUM_LEDS_PER_STRIP 20
+#define NUM_LEDS_PER_STRIP 19
 //Helligkeit
 #define BRIGHTNESS  100
 //Ledtyp
@@ -54,7 +60,7 @@ char incomingPacket[255];
 //Taktrate
 #define UPDATES_PER_SECOND 5
 //???
-CRGB leds[NUM_LEDS_PER_STRIP];
+CRGB leds[16][NUM_LEDS_PER_STRIP];
 
 //???
 //nicht nachmachen!
@@ -121,13 +127,17 @@ void setup() {
   //FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
   //Fuer mehrere Ledstreifen
   //???
-  FastLED.addLeds<NEOPIXEL, 12>(leds, NUM_LEDS_PER_STRIP);
-  FastLED.addLeds<NEOPIXEL, 13>(leds, NUM_LEDS_PER_STRIP);
-  FastLED.addLeds<NEOPIXEL, 14>(leds, NUM_LEDS_PER_STRIP);
-  FastLED.addLeds<NEOPIXEL, 15>(leds, NUM_LEDS_PER_STRIP);
-  FastLED.addLeds<NEOPIXEL, 2>(leds, NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<NEOPIXEL, 2>(leds[2], NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<NEOPIXEL, 12>(leds[12], NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<NEOPIXEL, 13>(leds[13], NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<NEOPIXEL, 14>(leds[14], NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<NEOPIXEL, 15>(leds[15], NUM_LEDS_PER_STRIP);
   //Helligkeit setzen mit BRIGHTNESS (siehe oben)
   FastLED.setBrightness(  BRIGHTNESS );
+
+  // this will be called for each packet received
+  artnet.setArtDmxCallback(onDmxFrame);
+  artnet.begin();
 
   //???
   counter = 1;
@@ -147,6 +157,7 @@ void loop() {
 
   // UDP Packet lesen
   udpRead();
+  artnet.read();
 
   //Debuging: sehen ob die Farben richtig dargestellt werden welche kommen
   //Serial.printf ("l: %i, %i, %i\n",l[0], l[1], l[2]);
@@ -172,6 +183,12 @@ void loop() {
               ledMode = 2;
             }
             modeAllOneColor(m[1],m[2], m[3]);
+            break;
+  	case 3: // Future MODE!!
+            if(ledMode != 3){
+              delayLed = 1; // auf 1 setzen, da ansonsten der alte Wert aus modeNetworkTraffic() verwendet
+              ledMode = 3;
+            }
             break;
     default:
             modeAllOneColor(255,0, 0);
@@ -266,10 +283,11 @@ void contrLED(uint8_t ir, uint8_t ig, uint8_t ib) {
   CRGB temp;
 
   for (int dot = 0; dot < NUM_LEDS_PER_STRIP; dot++) {
-
-    temp = lastLED;
-    lastLED = leds[dot];
-    leds[dot] = temp;
+	  for (int i = 0; i < 16; i++){
+		temp = lastLED;
+		lastLED = leds[i][dot];
+		leds[i][dot] = temp;
+	  }
   }
 }
 
@@ -282,7 +300,15 @@ void contrLED(uint8_t ir, uint8_t ig, uint8_t ib) {
  */
 void modeAllOneColor(uint8_t ir, uint8_t ig, uint8_t ib){
   for (int dot = 0; dot < NUM_LEDS_PER_STRIP; dot++) {
-    leds[dot] = CRGB(ir,ig,ib);
+    //Serial.println(dot, DEC);
+	  for (int i = 0; i < 16; i++){
+    	leds[i][dot] = CRGB(ir,ig,ib);
+
+		  //Serial.print(i, DEC);
+      //Serial.print(" ");
+
+	  }
+   //Serial.println();
   }
 }
 
@@ -292,8 +318,43 @@ void modeAllOneColor(uint8_t ir, uint8_t ig, uint8_t ib){
  */
 void modeAllOff(){
   for (int dot = 0; dot < NUM_LEDS_PER_STRIP; dot++) {
-    leds[dot] = CRGB::Black;
+	  for (int i = 0; i < 16; i++){
+    	leds[i][dot] = CRGB::Black;
+	  }
   }
+}
+
+void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data)
+{
+  boolean tail = false;
+
+  Serial.print("DMX: Univ: ");
+  Serial.print(universe, DEC);
+  Serial.print(", Seq: ");
+  Serial.print(sequence, DEC);
+  Serial.print(", Data (");
+  Serial.print(length, DEC);
+  Serial.print("): ");
+
+  if (length > 16) {
+    length = 16;
+    tail = true;
+  }
+  // send out the buffer
+  for (int i = 0; i < length; i++)
+  {
+    Serial.print(data[i], DEC);
+    Serial.print(" ");
+  }
+  if (tail) {
+    Serial.print("...");
+  }
+  Serial.println();
+
+	for (int i = 0; i < NUM_LEDS_PER_STRIP; i++){
+	  leds[universe][i] = CRGB(data[i*3], data[i*3+1], data[i*3+2]);
+	}
+
 }
 
 

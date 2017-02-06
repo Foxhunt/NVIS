@@ -1,15 +1,42 @@
 /*
 Example, transmit all received ArtNet messages (DMX) out of the serial port in plain text.
+
 Stephan Ruloff 2016
 https://github.com/rstephan
+
 */
+#if defined(ARDUINO_ARCH_ESP32)
+#include <WiFi.h>
+#else
 #include <ESP8266WiFi.h>
+#endif
 #include <WiFiUdp.h>
 #include <ArtnetWifi.h>
+#include <FastLED.h>
+
+//Anzahl der Leds pro Ledstreifen
+#define NUM_LEDS_PER_STRIP 19
+//Ledtyp
+#define LED_TYPE    WS2811
+//Reihenfolge der Farben
+#define COLOR_ORDER GRB
+//Helligkeit
+#define BRIGHTNESS  100
+
+CRGB leds[15][NUM_LEDS_PER_STRIP];
 
 //Wifi settings
-const char* ssid = "ssid";
-const char* password = "pAsSwOrD";
+const char* ssid = "Foxhunt-Net";
+const char* password = "striker1991";
+
+//IP config
+
+//IP des Microcontrollers
+IPAddress staticIP(192, 168, 0, 22);
+//Gateway
+IPAddress gateway(192, 168, 0, 1);
+//Subnetzmaske
+IPAddress subnet(255, 255, 255, 0);
 
 WiFiUDP UdpSend;
 ArtnetWifi artnet;
@@ -21,6 +48,7 @@ boolean ConnectWifi(void)
   int i = 0;
 
   WiFi.begin(ssid, password);
+  WiFi.config(staticIP, gateway, subnet);
   Serial.println("");
   Serial.println("Connecting to WiFi");
 
@@ -68,13 +96,18 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
   // send out the buffer
   for (int i = 0; i < length; i++)
   {
-    Serial.print(data[i], HEX);
+    Serial.print(data[i], DEC);
     Serial.print(" ");
   }
   if (tail) {
     Serial.print("...");
   }
   Serial.println();
+
+	for (int i = 0; i < NUM_LEDS_PER_STRIP; i++){
+	  leds[ (int) universe][i] = CRGB(data[i*3], data[i*3+1], data[i*3+2]);
+	}
+
 }
 
 void setup()
@@ -86,10 +119,17 @@ void setup()
   // this will be called for each packet received
   artnet.setArtDmxCallback(onDmxFrame);
   artnet.begin();
+
+  FastLED.addLeds<NEOPIXEL, 14>(leds[14], NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<NEOPIXEL, 13>(leds[13], NUM_LEDS_PER_STRIP);
+  FastLED.setBrightness(  BRIGHTNESS );
+
 }
 
 void loop()
 {
   // we call the read function inside the loop
   artnet.read();
+
+  FastLED.show();
 }

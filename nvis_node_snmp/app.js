@@ -1,6 +1,7 @@
 //benötigte Module
 const netLight = require("./NetLight.js");
 const staticLight = require("./StaticLight.js");
+const artNet = require("./ArtNet.js");
 
 const bodyParser = require("body-parser");
 const express = require("express");
@@ -26,21 +27,7 @@ modusRouter.post('/set', (req, res) => {
 
 		modus = req.body.modus;
 
-		switch (modus) {
-		case "NetLight":
-			runnigMode.stop();
-			runnigMode = netLight;
-			runnigMode.start();
-			break;
-		case "StaticLight":
-			runnigMode.stop();
-			runnigMode = staticLight;
-			runnigMode.start();
-			break;
-		default:
-			runnigMode.stop();
-			break;
-		}
+		switchMode(modus);
 
 		console.log('changed Modus to: ' + modus);
 	}
@@ -154,7 +141,33 @@ app.use('/staticLight', staticLightRouter);
 //app auf port lauschen lassen
 app.listen(port, () => {
 	console.log('app listening on port ' + port);
-	netLight.start();
-	modus = "NetLight";
-	runnigMode = netLight;
+	modus = "ArtNet";
+	switchMode(modus);
 });
+
+function switchMode(modus) {
+	switch (modus) {
+	case "NetLight":
+		if (runnigMode)
+			runnigMode.stop();
+		runnigMode = netLight;
+		runnigMode.start();
+		break;
+	case "StaticLight":
+		if (runnigMode)
+			runnigMode.stop();
+		runnigMode = staticLight;
+		runnigMode.start();
+		break;
+	case "ArtNet":
+		if (runnigMode)
+			runnigMode.stop();
+		runnigMode = artNet;
+		runnigMode.start();
+		break;
+	default:
+		if (runnigMode)
+			runnigMode.stop();
+		break;
+	}
+}
