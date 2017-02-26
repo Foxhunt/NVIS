@@ -27,7 +27,7 @@ CRGB leds[15][NUM_LEDS_PER_STRIP];
 
 //Wifi settings
 const char* ssid = "Foxhunt-Net";
-const char* password = "striker1991";
+const char* password = "";
 
 //IP config
 
