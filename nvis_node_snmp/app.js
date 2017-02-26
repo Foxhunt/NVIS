@@ -1,7 +1,7 @@
 //benötigte Module
-const netLight = require("./NetLight.js");
-const staticLight = require("./StaticLight.js");
-const artNet = require("./ArtNet.js");
+const netLight = require("./NetLight");
+const staticLight = require("./StaticLight");
+const artNet = require("./ArtNet");
 
 const bodyParser = require("body-parser");
 const express = require("express");

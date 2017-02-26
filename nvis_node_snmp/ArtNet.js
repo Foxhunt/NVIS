@@ -165,7 +165,7 @@ class ArtNet {
 			this.artInterval = setInterval(setArt, 1000 * 5);
 
 			//lauf licht
-			this.lauflicht = setInterval(lauflicht, 120);
+			this.lauflichtInterval = setInterval(lauflicht, 120);
 			//this.blinkerInterval = setInterval(blink, 20);
 			this.running = true;
 		}
