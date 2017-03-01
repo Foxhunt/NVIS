@@ -27,6 +27,10 @@ form#StaticLightForm {
 	display: none;
 }
 
+form#ArtNetForm {
+	display: none;
+}
+
 form[action="/nvis/addPortGroup"] input {
 	display: table-cell
 }

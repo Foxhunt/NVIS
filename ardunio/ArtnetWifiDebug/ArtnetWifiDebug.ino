@@ -37,7 +37,7 @@ CRGB leds[NUM_STRIPS][NUM_LEDS_PER_STRIP];
 //Netwerkname
 const char* ssid = "Foxhunt-Net";
 //Netzwerkpassword
-const char* password = "striker1991";
+const char* password = "";
 
 //IP config
 

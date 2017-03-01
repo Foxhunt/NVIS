@@ -24,7 +24,7 @@
 //Netwerkname
 const char* ssid = "PUB-Experimental";
 //Netzwerkpassword
-const char* password = "B1neN5tich";
+const char* password = "";
 
 //IP config
 

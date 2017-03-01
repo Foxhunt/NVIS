@@ -22,7 +22,7 @@ class PortGroup {
 		this.snmpGetIntervalTime = cfg.snmpGetIntervalTime;
 
 		//Maximale lebensdauer einer Messung für das Floating Max
-		this.window = 0;
+		this.window = 3;
 
 		//variable für die interval id
 		this.interval = 0;
@@ -231,7 +231,7 @@ class PortGroup {
 	start(window) {
 
 		//setzte das betrachtungs fester auf 5 minuten oder den übergebenen Wert
-		this.window = 3 || window;
+		this.window = this.window || window;
 
 		//wenn kein interval vorhanden ist starte einen
 		if (!this.interval) {
