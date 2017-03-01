@@ -141,7 +141,7 @@ app.use('/staticLight', staticLightRouter);
 //app auf port lauschen lassen
 app.listen(port, () => {
 	console.log('app listening on port ' + port);
-	modus = "ArtNet";
+	modus = "NetLight";
 	switchMode(modus);
 });
 

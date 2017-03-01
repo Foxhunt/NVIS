@@ -231,7 +231,7 @@ class PortGroup {
 	start(window) {
 
 		//setzte das betrachtungs fester auf 5 minuten oder den übergebenen Wert
-		this.window = 10 || window;
+		this.window = 3 || window;
 
 		//wenn kein interval vorhanden ist starte einen
 		if (!this.interval) {

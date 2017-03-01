@@ -1,10 +1,17 @@
 /*
-Example, transmit all received ArtNet messages (DMX) out of the serial port in plain text.
+  Example, transmit all received ArtNet messages (DMX) out of the serial port in plain text.
 
-Stephan Ruloff 2016
-https://github.com/rstephan
+  Stephan Ruloff 2016
+  https://github.com/rstephan
 
 */
+
+/*
+#define FASTLED_INTERRUPT_RETRY_COUNT 0
+#define FASTLED_ALLOW_INTERRUPTS 0
+#define INTERRUPT_THRESHOLD 1
+/**/
+
 #if defined(ARDUINO_ARCH_ESP32)
 #include <WiFi.h>
 #else
@@ -16,17 +23,20 @@ https://github.com/rstephan
 
 //Anzahl der Leds pro Ledstreifen
 #define NUM_LEDS_PER_STRIP 19
+//Anzahl der Streifen
+#define NUM_STRIPS 5
 //Ledtyp
-#define LED_TYPE    WS2811
+#define LED_TYPE    NEOPIXEL
 //Reihenfolge der Farben
 #define COLOR_ORDER GRB
 //Helligkeit
 #define BRIGHTNESS  100
 
-CRGB leds[15][NUM_LEDS_PER_STRIP];
+CRGB leds[NUM_STRIPS][NUM_LEDS_PER_STRIP];
 
-//Wifi settings
+//Netwerkname
 const char* ssid = "Foxhunt-Net";
+//Netzwerkpassword
 const char* password = "striker1991";
 
 //IP config
@@ -41,7 +51,7 @@ IPAddress subnet(255, 255, 255, 0);
 WiFiUDP UdpSend;
 ArtnetWifi artnet;
 
-// connect to wifi – returns true if successful or false if not
+// connect to wifi returns true if successful or false if not
 boolean ConnectWifi(void)
 {
   boolean state = true;
@@ -57,7 +67,7 @@ boolean ConnectWifi(void)
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
-    if (i > 20){
+    if (i > 20) {
       state = false;
       break;
     }
@@ -79,7 +89,10 @@ boolean ConnectWifi(void)
 
 void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data)
 {
+
+  /*
   boolean tail = false;
+  uint16_t outLength;
 
   Serial.print("DMX: Univ: ");
   Serial.print(universe, DEC);
@@ -90,11 +103,11 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
   Serial.print("): ");
 
   if (length > 16) {
-    length = 16;
+    outLength = 16;
     tail = true;
   }
   // send out the buffer
-  for (int i = 0; i < length; i++)
+  for (int i = 0; i < outLength; i++)
   {
     Serial.print(data[i], DEC);
     Serial.print(" ");
@@ -102,11 +115,13 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
   if (tail) {
     Serial.print("...");
   }
-  Serial.println();
 
-	for (int i = 0; i < NUM_LEDS_PER_STRIP; i++){
-	  leds[ (int) universe][i] = CRGB(data[i*3], data[i*3+1], data[i*3+2]);
-	}
+  Serial.println();
+  */
+
+  for (int i = 0; i < length / 3; i++) {
+    leds[universe][i] = CRGB(data[i * 3], data[i * 3 + 1], data[i * 3 + 2]);
+  }
 
 }
 
@@ -120,8 +135,12 @@ void setup()
   artnet.setArtDmxCallback(onDmxFrame);
   artnet.begin();
 
-  FastLED.addLeds<NEOPIXEL, 14>(leds[14], NUM_LEDS_PER_STRIP);
-  FastLED.addLeds<NEOPIXEL, 13>(leds[13], NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<LED_TYPE, 4>(leds[0], NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<LED_TYPE, 2>(leds[1], NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<LED_TYPE, 0>(leds[2], NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<LED_TYPE, 13>(leds[3], NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<LED_TYPE, 14>(leds[4], NUM_LEDS_PER_STRIP);
+
   FastLED.setBrightness(  BRIGHTNESS );
 
 }
@@ -133,3 +152,4 @@ void loop()
 
   FastLED.show();
 }
+
