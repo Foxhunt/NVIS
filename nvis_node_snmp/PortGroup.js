@@ -22,10 +22,13 @@ class PortGroup {
 		this.snmpGetIntervalTime = cfg.snmpGetIntervalTime;
 
 		//Maximale lebensdauer einer Messung für das Floating Max
-		this.window = 3;
+		this.window = 1;
 
 		//variable für die interval id
 		this.interval = 0;
+
+		//anzahl der ausgegebenen logg zeilen
+		this.logCount = 0;
 
 		//standard OIDs
 		this.speed = "1.3.6.1.2.1.2.2.1.5.";
@@ -41,7 +44,7 @@ class PortGroup {
 		this.lastPktsOut = [];
 
 		//gemessene werte zum ermitteln des Maximums
-		this.maxSpeed = [];
+		this.maxBPs = [];
 		this.maxPPS = [];
 		this.maxPktSize = [];
 
@@ -135,7 +138,7 @@ class PortGroup {
 		//maxima des betrachteten zeitraums ermitteln
 		//arrays kopieren um die reihenfolge der messungen beizubehalten
 		//absteigend sortieren und das erste element auswählen
-		let maxSpeed = this.maxSpeed.concat().sort(this.srtDesc)[0];
+		let maxBPs = this.maxBPs.concat().sort(this.srtDesc)[0];
 		let maxPktSize = this.maxPktSize.concat().sort(this.srtDesc)[0];
 		let maxPPs = this.maxPPS.concat().sort(this.srtDesc)[0];
 
@@ -146,14 +149,14 @@ class PortGroup {
 
 		//prüfe ob MaxWerte vorhanden sind
 		let maxWerteVorhanden = (
-			maxSpeed !== undefined || maxPktSize !== undefined || maxPPs !== undefined);
+			maxBPs !== undefined || maxPktSize !== undefined || maxPPs !== undefined);
 
 
 		//nur Verhältnisse bilden wenn max Werte vorhanden sind
 		if (maxWerteVorhanden) {
 
 			//ermittle port auslastung relativ zum maximal wert des betrachteten Zeitraums
-			let portUtil = Math.round(this.current.bPS / maxSpeed * 100);
+			let portUtil = Math.round(this.current.bPS / maxBPs * 100);
 
 			//ermittle PacketSize auslastung relativ zum maximal wert des betrachteten Zeitraums
 			let packetSize = Math.round(this.current.pktSize / maxPktSize * 100);
@@ -175,9 +178,9 @@ class PortGroup {
 
 			//String zum versenden erstellen
 			// portUtil, pps, pktSize
-			let out = `1, ${this.rgb(portUtil)}, ${pps}, ${packetSize}`;
+			let out = `1, ${portUtil}, ${pps}, ${packetSize}`;
 
-			let log = `${this.current.bPS}, ${this.current.pktSize}, ${this.current.pPS}, ${maxSpeed}, ${maxPktSize}, ${maxPPs}, "${out}"`;
+			let log = `${this.current.bPS}, ${this.current.pPS}, ${this.current.pktSize}, ${maxBPs}, ${maxPPs}, ${maxPktSize}, "${out}"`;
 
 			this.out(log);
 
@@ -203,14 +206,14 @@ class PortGroup {
 		if (currentsVorhanden) {
 			// überprüfe die Anzahl der gespeicherten messpunkte
 			// sind mehr als nötig vorhanden lösche das erste
-			if (this.maxSpeed.length >= ((this.window * 60) / this.snmpGetIntervalTime)) {
-				this.maxSpeed.shift();
+			if (this.maxBPs.length >= ((this.window * 60) / this.snmpGetIntervalTime)) {
+				this.maxBPs.shift();
 				this.maxPPS.shift();
 				this.maxPktSize.shift();
 			}
 
 			// füge die aktuellen Werte hinzu
-			this.maxSpeed.push(Math.round(this.current.bPS > this.current.speed ? this.current.speed : this.current.bPS));
+			this.maxBPs.push(Math.round(this.current.bPS > this.current.speed ? this.current.speed : this.current.bPS));
 			this.maxPPS.push(Math.round(this.current.pPS));
 			this.maxPktSize.push(Math.round(this.current.pktSize));
 
@@ -239,7 +242,7 @@ class PortGroup {
 				this.getPortGroupValues();
 			}, this.snmpGetIntervalTime * 1000);
 
-			this.out(`bPS, pktSize, pPS, maxSpeed, maxPktSize, maxPPs, out`);
+			this.out(`bPS, pPS, pktSize, maxBPs, maxPPs, maxPktSize, out`);
 
 		}
 
@@ -259,7 +262,7 @@ class PortGroup {
 			this.lastPktsOut = [];
 
 			//gemessene werte zurücksetzten
-			this.maxSpeed = [];
+			this.maxBPs = [];
 			this.maxPPS = [];
 			this.maxPktSize = [];
 
@@ -329,6 +332,14 @@ class PortGroup {
 			if (err) throw err;
 			console.log(this.beschreibung + ".txt appended");
 		});
+
+		this.logCount++;
+
+		if(this.logCount > 20){
+			this.logCount = 0;
+			this.out(`bPS, pPS, pktSize, maxBPs, maxPPs, maxPktSize, out`);
+		}
+
 	}
 
 } // ende PortGroup
