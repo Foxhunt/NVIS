@@ -38,8 +38,8 @@ unsigned int localUdpPort = 1337;
 char incomingPacket[255];
 
 // nachschlage register für Sin und Cos
-double sinTab[101];
-double cosTab[101];
+int sinTab[101];
+int cosTab[101];
 
 
 // Variablen für die LEDs
@@ -88,8 +88,8 @@ void setup() {
 
     float rad = ((float) i / 100) * (PI * 2  / 4);
 
-    sinTab[i] = sin(rad);
-    cosTab[i] = cos(rad);
+    sinTab[i] = 255 * sin(rad);
+    cosTab[i] = 255 * cos(rad);
 
   }
 
@@ -251,7 +251,9 @@ void modeNetworkTraffic() {
   // Setzen der LEDs abhängig von der Paketlänge
   if (counter <= packetLength) {
     //Farbe
-    rgb(ledColor, udpValues[1]);
+    ledColor[0] =  sinTab[udpValues[1]];
+	ledColor[1] =  cosTab[udpValues[1]];
+	ledColor[2] =  0;
     Serial.printf("farbe\n");
   } else {
     //Schwarz
@@ -329,15 +331,3 @@ void modeAllOff() {
     }
   }
 }
-
-void rgb(int *arr, int in) {
-  arr[0] = 255 * sinTab[in];
-  Serial.printf("sinTab[%i]: %d\n", in, sinTab[in]);
-
-  arr[1] = 255 * cosTab[in];
-  Serial.printf("cosTab[%i]: %d\n", in, cosTab[in]);
-
-  arr[2] = 0;
-}
-
-
