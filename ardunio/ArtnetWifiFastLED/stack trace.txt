@@ -1,0 +1,15 @@
+
+Decoding 12 results
+0x4010020c: _umm_free at C:\Users\Marco\AppData\Local\Arduino15\packages\esp8266\hardware\esp8266\2.3.0\cores\esp8266\umm_malloc/umm_malloc.c line 1287
+0x4010068c: free at C:\Users\Marco\AppData\Local\Arduino15\packages\esp8266\hardware\esp8266\2.3.0\cores\esp8266\umm_malloc/umm_malloc.c line 1733
+0x4021a2f5: system_pp_recycle_rx_pkt at ?? line ?
+0x40107b34: vPortFree at C:\Users\Marco\AppData\Local\Arduino15\packages\esp8266\hardware\esp8266\2.3.0\cores\esp8266/heap.c line 18
+0x402221b6: pbuf_free at /Users/igrokhotkov/espressif/arduino/tools/sdk/lwip/src/core/pbuf.c line 752
+0x402221cd: pbuf_free at /Users/igrokhotkov/espressif/arduino/tools/sdk/lwip/src/core/pbuf.c line 758
+0x40201ce0: onDmxFrame(unsigned short, unsigned short, unsigned char, unsigned char*) at C:\Users\Marco\Desktop\ArtnetWifiFastLED/ArtnetWifiFastLED.ino line 108
+0x40202cf3: WiFiUDP::parsePacket() at C:\Users\Marco\AppData\Local\Arduino15\packages\esp8266\hardware\esp8266\2.3.0\libraries\ESP8266WiFi\src/WiFiUdp.cpp line 67
+0x40202fc4: ArtnetWifi::read() at C:\Users\Marco\Documents\Arduino\libraries\ArtnetWifi\src/ArtnetWifi.cpp line 45
+0x40201f2c: CFastLED::show() at C:\Users\Marco\Documents\Arduino\libraries\FastLED/FastLED.h line 473
+:  (inlined by) loop at C:\Users\Marco\Desktop\ArtnetWifiFastLED/ArtnetWifiFastLED.ino line 148
+0x40203a24: loop_wrapper at C:\Users\Marco\AppData\Local\Arduino15\packages\esp8266\hardware\esp8266\2.3.0\cores\esp8266/core_esp8266_main.cpp line 56
+0x40100718: cont_norm at C:\Users\Marco\AppData\Local\Arduino15\packages\esp8266\hardware\esp8266\2.3.0\cores\esp8266/cont.S line 109
