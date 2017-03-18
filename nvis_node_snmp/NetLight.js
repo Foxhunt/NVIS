@@ -3,7 +3,7 @@ let fs = require("fs");
 
 let PortGroup = require("./PortGroup.js");
 
-let PortGroupsCfg = require("./PortGroups.json");
+let PortGroupsCfg = require("/files/PortGroups.json");
 let portGroups = [];
 
 

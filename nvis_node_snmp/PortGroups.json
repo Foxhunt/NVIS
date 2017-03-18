@@ -1,18 +1,10 @@
 [
 	{
-		"beschreibung": "AT-GS950-16",
-		"quelle": "192.168.0.241",
-		"ports": [3],
-		"community": "public",
-		"ziele": ["192.168.0.22"],
-		"snmpGetIntervalTime": 10
-	},
-	{
 		"beschreibung": "Foxy-Bok-Local",
-		"quelle": "127.0.0.1",
-		"ports": [6],
+		"quelle": "10.0.75.1",
+		"ports": [7],
 		"community": "public",
 		"ziele": ["192.168.0.44"],
-		"snmpGetIntervalTime": 600
+		"snmpGetIntervalTime": 11
 	}
 ]
