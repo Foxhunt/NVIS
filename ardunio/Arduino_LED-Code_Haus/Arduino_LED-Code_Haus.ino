@@ -23,8 +23,7 @@ const char* password = "B1neN5tich";
 // IP config
 
 // IP des Microcontrollers
-IPAddress staticIP(192, 168, 0, 22);
-//IPAddress staticIP(192, 168, 0, 11);
+IPAddress staticIP(192, 168, 0, 11);
 
 // Gateway
 IPAddress gateway(192, 168, 0, 1);
@@ -107,11 +106,11 @@ void setup() {
   delay( 3000 );
 
   // Setup der LED-Stripes
-  FastLED.addLeds<NEOPIXEL, 15>(leds[0], NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<NEOPIXEL, 4>(leds[0], NUM_LEDS_PER_STRIP);
   FastLED.addLeds<NEOPIXEL, 2>(leds[1], NUM_LEDS_PER_STRIP);
   FastLED.addLeds<NEOPIXEL, 0>(leds[2], NUM_LEDS_PER_STRIP);
-  FastLED.addLeds<NEOPIXEL, 4>(leds[3], NUM_LEDS_PER_STRIP);
-  FastLED.addLeds<NEOPIXEL, 5>(leds[4], NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<NEOPIXEL, 13>(leds[3], NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<NEOPIXEL, 14>(leds[4], NUM_LEDS_PER_STRIP);
   // Helligkeit setzen mit BRIGHTNESS (siehe oben)
   FastLED.setBrightness(  BRIGHTNESS );
 

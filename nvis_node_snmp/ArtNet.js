@@ -1,15 +1,30 @@
 /*jshint esversion: 6 */
 
-//Huzzah
-var ziel = "192.168.0.22";
+//Huzzahs
 
+let PortGroupsCfg = require("./PortGroups.json");
+
+let ips = [];
+let ziele = [];
+
+PortGroupsCfg.forEach((portGrp) => {
+	portGrp.ziele.forEach((ziel) => {
+		ips.push(ziel);
+		ziele.push(require('artnet')({
+			host: ziel,
+			sendAll: true
+		}));
+	});
+});
+
+/*
 const options = {
 	host: ziel,
 	sendAll: true
 };
 
 var artnet = require('artnet')(options);
-
+*/
 
 
 
@@ -36,29 +51,33 @@ var step = 3;
 
 // erste led und letzte led
 var start = 1 * step - 2;
-var end = 126 * step - 2;
+var end = 28 * step - 2;
 
 // aktuelle led ist zu begin start
 var current = start;
 
 function lauflicht() {
 
-	artnet.set(0, current, blue);
-	artnet.set(1, current, black);
-	artnet.set(2, current, black);
-	artnet.set(3, current, black);
-	artnet.set(4, current, black);
+	ziele.forEach(ziel => {
+		ziel.set(0, current, blue);
+		ziel.set(1, current, black);
+		ziel.set(2, current, black);
+		ziel.set(3, current, red);
+		ziel.set(4, current, black);
+	});
 
 	//gehe einen schritt weiter
 	current += step;
 
 	//setzte die nächste led auf dunkel -> pin 13
-	for (let i = 0; i < 14; i++) {
-		artnet.set(0, current + step * i, black);
-		artnet.set(1, current + step * i, green);
-		artnet.set(2, current + step * i, red);
-		artnet.set(3, current + step * i, white);
-		artnet.set(4, current + step * i, blue);
+	for (let i = 0; i < 4; i++) {
+		ziele.forEach(ziel => {
+			ziel.set(0, current + step * i, black);
+			ziel.set(1, current + step * i, green);
+			ziel.set(2, current + step * i, red);
+			ziel.set(3, current + step * i, white);
+			ziel.set(4, current + step * i, blue);
+		});
 	}
 
 	// current ist = 1+3*x  | 1 = 1,2,3 | 2 = 4,5,6 | 3 = 7,8,9
@@ -73,12 +92,14 @@ function lauflicht() {
 
 function setArt() {
 
-	udpSocket.send("3", 0, "3".length, 1337, ziel, (err) => {
-		if (err)
-			console.error(err);
+	ips.forEach(ip => {
+		udpSocket.send("3", 0, "3".length, 1337, ip, (err) => {
+			if (err)
+				console.error(err);
 
-		console.log("send: " + "3" + " an: " + ziel);
+			console.log("send: " + "3" + " an: " + ip);
 
+		});
 	});
 
 }
@@ -101,7 +122,7 @@ class ArtNet {
 			this.setArtInterval = setInterval(setArt, 1000 * 5);
 
 			//lauf licht
-			this.lauflichtInterval = setInterval(lauflicht, 360);
+			this.lauflichtInterval = setInterval(lauflicht, 260);
 
 			this.running = true;
 		}

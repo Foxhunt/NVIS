@@ -5,8 +5,8 @@ var udpSocket = dgram.createSocket({
 
 // portUtil, pps, pktSize
 
-var out = "1, 100, 0, 100";
-var ziel = "192.168.0.22";
+var out = "1, 20, 50, 50";
+var ziel = "192.168.0.11";
 
 setInterval(() => {
 	udpSocket.send(out, 0, out.length, 1337, ziel, (err) => {

@@ -5,14 +5,14 @@
 		"ports": [3],
 		"community": "public",
 		"ziele": ["192.168.0.22"],
-		"snmpGetIntervalTime": 10
+		"snmpGetIntervalTime": 11
 	},
 	{
 		"beschreibung": "Foxy-Bok-Local",
 		"quelle": "127.0.0.1",
-		"ports": [6],
+		"ports": [8],
 		"community": "public",
-		"ziele": ["192.168.0.44"],
-		"snmpGetIntervalTime": 600
+		"ziele": ["192.168.0.11"],
+		"snmpGetIntervalTime": 11
 	}
 ]

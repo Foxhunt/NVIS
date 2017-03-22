@@ -24,7 +24,6 @@ const char* password = "B1neN5tich";
 
 // IP des Microcontrollers
 IPAddress staticIP(192, 168, 0, 22);
-//IPAddress staticIP(192, 168, 0, 11);
 
 // Gateway
 IPAddress gateway(192, 168, 0, 1);
