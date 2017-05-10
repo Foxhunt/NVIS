@@ -12,9 +12,10 @@
 #include <WiFiUdp.h>
 #include <ArtnetWifi.h>
 
+
 // WLAN und UDP config
 
-//Netwerkname
+//Netzwerkname
 const char* ssid = "PUB-Experimental";
 //Netzwerkpassword
 const char* password = "B1neN5tich";
@@ -30,7 +31,7 @@ IPAddress gateway(192, 168, 0, 1);
 // Subnetzmaske
 IPAddress subnet(255, 255, 255, 0);
 
-// UDP als Wlan Protokol nutzen
+// UDP als Wlan Protokoll nutzen
 WiFiUDP Udp;
 ArtnetWifi artnet;
 int length;
@@ -40,7 +41,7 @@ unsigned int localUdpPort = 1337;
 // Buffer für reinkommende Pakete
 char incomingPacket[255];
 
-// nachschlage register für Sin und Cos
+// Nachschlageregister für Sin und Cos
 int sinTab[101];
 int cosTab[101];
 
@@ -48,8 +49,8 @@ int cosTab[101];
 // Variablen für die LEDs
 
 // Anzahl der LEDs pro Ledstreifen (30 Leds pro Meter)
-#define NUM_LEDS_PER_STRIP 142
-//Anzahl der LED-Streifen
+#define NUM_LEDS_PER_STRIP 27
+// Anzahl der LED-Streifen
 #define NUM_LED_STRIPS 5
 // Helligkeit
 #define BRIGHTNESS  100
@@ -73,14 +74,17 @@ int ledMode;
 int packetSize;
 // Packetlänge, welche durchs UDP-Packet übermittelt wird
 int packetLength;
-// Delay als Indikator für die Geschwindigkeit
-int delayLed;
+// Delay als Beschreibung der "Bewegungsgeschwindigkeit" der LEDs
+int ledDelay;
 
 // Counter für die maximale Länge der leuchtenden LED-Fragmente
 // (benötigt in modeNetworkTraffic())
 int counter;
-// Ist die Darstellung pausiert
+// Ist die Darstellung pausiert?
 boolean isPaused;
+
+void(* resetFunc) (void) = 0;
+
 
 
 
@@ -99,18 +103,19 @@ void setup() {
   // Baud setzen
   Serial.begin(115200);
 
-  //baue Wifi verbindug auf.
+  // Baue Wifi-Verbindug auf.
   connectWifi();
 
   // Starte Sicherheits-Delay von 3s
   delay( 3000 );
 
   // Setup der LED-Stripes
-  FastLED.addLeds<NEOPIXEL, 15>(leds[0], NUM_LEDS_PER_STRIP);
-  FastLED.addLeds<NEOPIXEL, 2>(leds[1], NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<NEOPIXEL, 5>(leds[0], NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<NEOPIXEL, 4>(leds[1], NUM_LEDS_PER_STRIP);
   FastLED.addLeds<NEOPIXEL, 0>(leds[2], NUM_LEDS_PER_STRIP);
-  FastLED.addLeds<NEOPIXEL, 4>(leds[3], NUM_LEDS_PER_STRIP);
-  FastLED.addLeds<NEOPIXEL, 5>(leds[4], NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<NEOPIXEL, 12>(leds[3], NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<NEOPIXEL, 15>(leds[4], NUM_LEDS_PER_STRIP);
+
   // Helligkeit setzen mit BRIGHTNESS (siehe oben)
   FastLED.setBrightness(  BRIGHTNESS );
 
@@ -120,7 +125,8 @@ void setup() {
   ledColor[1] = 0;
   ledColor[2] = 0;
   udpValues[0] = 5;
-  delayLed = 1;
+  ledDelay = 1;
+  ledMode = 5;
 
   artnet.begin();
 
@@ -131,46 +137,100 @@ void loop() {
   // UDP Packet lesen
   udpRead();
 
-  //Debuging: sehen ob die Farben richtig dargestellt werden welche kommen
+  // ArtNet-Daten lesen
+  if (artnet.read() == ART_DMX) {
+        Serial.printf("ArtNet gelesen");
+  }
+
+  // Verbindung prüfen und falls notwendig neu verbinden
+  if (!WiFi.isConnected()){
+    WiFi.reconnect();
+    Serial.print("reconnecting!  ");
+    while(WiFi.status() != WL_CONNECTED){
+      delay(500);
+      Serial.print(".");
+    }
+  }
+
+  //Debugging: sehen, ob die Farben richtig dargestellt werden
   Serial.printf ("ledColor: %i, %i, %i\n", ledColor[0], ledColor[1], ledColor[2]);
+  Serial.printf("|");
   Serial.printf ("udpValues: %i, %i, %i, %i\n", udpValues[0], udpValues[1], udpValues[2], udpValues[3]);
+  Serial.printf("|");
 
   // Ausführen des gesendeten Modus
   switch (udpValues[0]) {
     case 0: // LEDs ausschalten
+
+      // Sicherheitsrestart
+      if (ledMode == 3 || ledMode == 2 || ledMode == 1){
+        ESP.restart();
+      }
+
+      // Modusindikator setzen
+      ledMode = 0;
+      // Alle LEDs auf schwarz setzen
       modeAllOff();
+      // Ist pausiert?
       isPaused = false;
+
       break;
     case 1: // Netzwerktraffic-Darstellung
-      if (ledMode != 1) { // Alle LED zu Anfang schwarz färben
+
+      // Sicherheitsrestart
+      if (ledMode == 3 || ledMode == 2 || ledMode == 0){
+        ESP.restart();
+      }
+
+      // Alle LED zu Anfang schwarz färben
+      if (ledMode != 1) {
         modeAllOff();
-        ledMode = 1;
       }
+
+      // Modusindikator setzen
+      ledMode = 1;
+      // LEDs Farbwerte zuweisen
       modeNetworkTraffic();
+      // Ist pausiert?
       isPaused = false;
-      // Aktualisierung verzögern
-      delay(1500 / delayLed);
+      // Aktualisierungsgeschwindigkeit
+      delay(1500 / ledDelay);
+
       break;
-    case 2: // lässt alle LEDs in einer Farbe leuchten
-      if (ledMode != 2) {
-        ledMode = 2;
+    case 2: // Lässt alle LEDs in einer Farbe leuchten
+
+      Serial.printf("Static Light ON \n");
+
+      // Sicherheitsrestart
+      if (ledMode == 3 || ledMode == 1 || ledMode == 0){
+       ESP.restart();
       }
 
+      // Modusindikator setzen
+      ledMode = 2;
+      //delay(500);
+      // Allen LEDs gleiche Farbe zuweisen
       modeAllOneColor(udpValues[1], udpValues[2], udpValues[3]);
+      // Ist pausiert?
       isPaused = false;
+
       break;
-    case 3:
-      if (ledMode != 3) {
-        ledMode = 3;
+    case 3: // ArtNet-Darstellung
+
+    Serial.printf("ArtNet Modus --------");
+
+      // Sicherheitsrestart
+      if (ledMode == 2 || ledMode == 1 || ledMode == 0) {
+        ESP.restart();
       }
 
-      if (artnet.read() == ART_DMX) {
+      // Modusindikator setzen
+      ledMode = 3;
 
         length = artnet.getLength() <= NUM_LEDS_PER_STRIP * 3 ? artnet.getLength() : NUM_LEDS_PER_STRIP * 3;
 
         memcpy(leds[artnet.getUniverse()], artnet.getDmxFrame(), length);
 
-      }
 
       break;
     case 4: // Pause
@@ -180,6 +240,8 @@ void loop() {
       modeAllOneColor(255, 0, 0);
       break;
   }
+  Serial.print("\nFree Heap:\n");
+  Serial.println(ESP.getFreeHeap(), DEC);
 
   // zeige an
   if (!isPaused)
@@ -195,14 +257,15 @@ void udpRead() {
 
   // UDP Paket auslesen und in einzelne ints umwandeln
   packetSize = Udp.parsePacket();
+  Serial.printf("PacketSize: ", packetSize);
   if (packetSize)
   {
-    // receive incoming UDP packets
+    // Erhalte einkommendes UDP Paket
 
-    //Serial.printf("Received %d bytes from %s, port %d\n", packetSize, Udp.remoteIP().toString().c_str(), Udp.remotePort());
+    Serial.printf("Received %d bytes from %s, port %d\n", packetSize, Udp.remoteIP().toString().c_str(), Udp.remotePort());
 
     // Länge des UDP-Paketes
-    int len = Udp.read(incomingPacket, 255);
+    int len = Udp.read(incomingPacket, 512);
 
     // Ende des Paketes im Buffer mit 0 markieren
     if (len > 0)
@@ -225,6 +288,9 @@ void udpRead() {
   }
 }
 
+/**
+ * Verbindet sich mit dem Oben angegebenen Netzwerk
+ */
 void connectWifi() {
 
   // Information, mit welchem Netzwerk der Mikrocontroller sich verbinden moechte
@@ -256,9 +322,9 @@ void connectWifi() {
 /**
    Visualisiert die Netzwerkauslastung und zeigt sie auf den LEDs an.
    In regelmäßigen Intervallen laufen Streifen aus leuchtenden LEDs über den/die LED-Stripes,
-   deren Menge an zusammenhängend leuchtenden LEDs von der Paketgröße abhängt (UDP-Buffer Stelle 6).
-   Die Geschwindigkeit, mit welcher die leuchtenden Streifen den/die LED-Stripes traversieren, variiert je nach Paketmenge (UDP-Buffer Stelle 5).
-   Die Farbe ist abhängig von der Gesamtnetzwerkauslastung (UDP-Buffer Stelle 1, 2 und 3 (RGB))
+   deren Menge an zusammenhängend leuchtenden LEDs von der Paketgröße abhängt.
+   Die Geschwindigkeit, mit welcher die leuchtenden Streifen den/die LED-Stripes traversieren, variiert je nach Paketmenge.
+   Die Farbe ist abhängig von der Gesamtnetzwerkauslastung.
 */
 void modeNetworkTraffic() {
 
@@ -292,13 +358,13 @@ void modeNetworkTraffic() {
   contrLED(ledColor[0], ledColor[1], ledColor[2]);
 
   // Aktualisierungsdelay setzen
-  delayLed = (udpValues[2] / 15);
-  if (delayLed == 0) delayLed = 1;
+  ledDelay = (udpValues[2] / 15);
+  if (ledDelay == 0) ledDelay = 1;
 }
 
 /**
    Aktualisiert den LED Streifen so, dass die Werte jeder LED
-   auf die nächste übertragen wird und setzt den Farbwert der ersten LED
+   auf die nächste übertragen werden und setzt den Farbwert der ersten LED
    auf die durch die Parameter übergebenen Farbe.
 
    @param ir Rotwert der ersten LED

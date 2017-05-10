@@ -60,7 +60,7 @@ function lauflicht() {
 
 	ziele.forEach(ziel => {
 		ziel.set(0, current, blue);
-		ziel.set(1, current, black);
+		ziel.set(1, current, red);
 		ziel.set(2, current, black);
 		ziel.set(3, current, red);
 		ziel.set(4, current, black);

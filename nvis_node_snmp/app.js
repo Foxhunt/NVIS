@@ -133,7 +133,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 //router benutzen
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
 app.use('/nvis', nvisRouter);
 app.use('/modus', modusRouter);
 app.use('/staticLight', staticLightRouter);
